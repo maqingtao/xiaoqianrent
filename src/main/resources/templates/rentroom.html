@@ -80,9 +80,19 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
           var city_sel=document.getElementById("r_city");
           var type_sel=document.getElementById("r_type");
+          var low_price_sel=document.getElementById("low_price");
+          var hig_price_sel=document.getElementById("hig_price");
+          var min_area_sel=document.getElementById("min_area");
+          var max_area_sel=document.getElementById("max_area");
           var spaceDimID=city_sel.options[city_sel.selectedIndex].value
           var roomDimID=type_sel.options[type_sel.selectedIndex].value
-          $.postJSON('/api/getPageSize',{"roomDimID":roomDimID, "spaceDimID":spaceDimID},callback);
+          var l_price=low_price_sel.options[low_price_sel.selectedIndex].value
+          var h_price=hig_price_sel.options[hig_price_sel.selectedIndex].value
+          var min_area=min_area_sel.options[min_area_sel.selectedIndex].value
+          var max_area=max_area_sel.options[max_area_sel.selectedIndex].value
+          $.postJSON('/api/getPageSize', {"roomDimID":roomDimID,"spaceDimID":spaceDimID,
+              "minPrice":l_price,"maxPrice":h_price,
+              "minArea":min_area,"maxArea":max_area},callback);
       }
       function getPageInformation(pageNumber) {
           var callback = function (data) {
@@ -98,10 +108,20 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
           }
           var city_sel=document.getElementById("r_city");
           var type_sel=document.getElementById("r_type");
+          var low_price_sel=document.getElementById("low_price");
+		  var hig_price_sel=document.getElementById("hig_price");
+		  var min_area_sel=document.getElementById("min_area");
+		  var max_area_sel=document.getElementById("max_area");
           var spaceDimID=city_sel.options[city_sel.selectedIndex].value
           var roomDimID=type_sel.options[type_sel.selectedIndex].value
+		  var l_price=low_price_sel.options[low_price_sel.selectedIndex].value
+		  var h_price=hig_price_sel.options[hig_price_sel.selectedIndex].value
+		  var min_area=min_area_sel.options[min_area_sel.selectedIndex].value
+		  var max_area=max_area_sel.options[max_area_sel.selectedIndex].value
           $.postJSON('/api/getSelectMessage/'+pageNumber,
-              {"roomDimID":roomDimID,"spaceDimID":spaceDimID},callback);
+              {"roomDimID":roomDimID,"spaceDimID":spaceDimID,
+				  "minPrice":l_price,"maxPrice":h_price,
+				  "minArea":min_area,"maxArea":max_area},callback);
       }
       function getDataRow(h) {
           var row = document.createElement('tr');
@@ -126,7 +146,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
           row.appendChild(roomStructure);
 
 		  var detail=document.createElement('td');
-		  var str="index?roomDimID="+h.roomDimID;
+		  var str="detail?roomDimID="+h.mainID
           detail.innerHTML = "<a href='"+str+"'>查看详细信息</a>";
           row.appendChild(detail);
 		  return row

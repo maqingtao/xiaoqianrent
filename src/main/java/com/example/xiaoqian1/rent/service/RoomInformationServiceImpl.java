@@ -47,13 +47,15 @@ public class RoomInformationServiceImpl implements RoomInformationService {
     public Page<RoomInformation> getSelectInformation(Pageable pageable, RoomInformation r) {
         Page<RoomInformation> page = null;
         //添加无限制状态
-        if (r.getRoomDimID().equals("-1") && r.getSpaceDimID().equals("-1")) {
-            page = informationRepository.findAll(pageable);
-        } else {
             page = informationRepository.findAll(getCondition(r), pageable);
-        }
+
         return page;
     }
+/**
+* @Author: maqingtao
+* @description: 动态查询拼写
+* @create: 2019/3/22
+**/
 
     private Specification<RoomInformation> getCondition(RoomInformation roomInformation) {
         Specification<RoomInformation> sp = new Specification<RoomInformation>() {
@@ -64,13 +66,35 @@ public class RoomInformationServiceImpl implements RoomInformationService {
                 // 组装条件
                 //租房类型
                 if (roomInformation.getRoomDimID() != null
-                        &&!roomInformation.getRoomDimID().equals("-1")) {
+                        && !roomInformation.getRoomDimID().equals("-1")) {
                     predicate.getExpressions().add(criteriaBuilder.equal(root.get("roomDimID"), roomInformation.getRoomDimID()));
                 }
                 //地理位置
                 if (roomInformation.getSpaceDimID() != null
-                        &&!roomInformation.getSpaceDimID().equals("-1")) {
+                        && !roomInformation.getSpaceDimID().equals("-1")) {
                     predicate.getExpressions().add(criteriaBuilder.equal(root.get("spaceDimID"), roomInformation.getSpaceDimID()));
+                }
+                //价格区间
+                if (roomInformation.getMaxPrice() != null) {
+                    if (roomInformation.getMaxPrice()==-1) {
+                        predicate.getExpressions().add(criteriaBuilder.between(root.<Integer>get("roomPrice")
+                                , roomInformation.getMinPrice(), 999999));
+                    } else {
+                        predicate.getExpressions().add(criteriaBuilder.between(root.<Integer>get("roomPrice")
+                                , roomInformation.getMinPrice(), roomInformation.getMaxPrice()));
+                    }
+
+                }
+                //面积区间
+                if (roomInformation.getMaxArea() != null) {
+                    if (roomInformation.getMaxArea()==-1) {
+                        predicate.getExpressions().add(criteriaBuilder.between(root.<Integer>get("roomArea")
+                                , roomInformation.getMinArea(), 999999));
+                    } else {
+                        predicate.getExpressions().add(criteriaBuilder.between(root.<Integer>get("roomArea")
+                                , roomInformation.getMinArea(), roomInformation.getMaxArea()));
+                    }
+
                 }
                 return predicate;
             }

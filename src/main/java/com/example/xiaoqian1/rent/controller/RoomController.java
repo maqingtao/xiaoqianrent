@@ -1,7 +1,6 @@
 package com.example.xiaoqian1.rent.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.example.xiaoqian1.rent.bean.RoomInformation;
 import com.example.xiaoqian1.rent.service.RoomInformationService;
 import org.springframework.beans.factory.annotation.Autowired;

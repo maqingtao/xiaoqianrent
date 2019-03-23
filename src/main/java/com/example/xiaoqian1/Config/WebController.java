@@ -30,6 +30,11 @@ public class WebController {
     public String rentroom() {
         return "rentroom";
     }
+    //租房页面
+    @RequestMapping("/detail")
+    public String detail() {
+        return "single";
+    }
     //测试
     @RequestMapping("/test")
     public String test() {

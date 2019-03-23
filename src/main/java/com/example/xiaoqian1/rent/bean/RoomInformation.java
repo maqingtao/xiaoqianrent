@@ -21,5 +21,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "room")
 public class RoomInformation extends Room implements Serializable {
-
+       private Integer minPrice;
+       private Integer maxPrice;
+       private Integer minArea;
+       private Integer maxArea;
 }
