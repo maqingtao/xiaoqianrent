@@ -16,9 +16,9 @@ public class WebController {
         return "register";
     }
     //index
-    @RequestMapping("/index")
-    public String indexHtml() {
-        return "index";
+    @RequestMapping("/personal")
+    public String personalHtml() {
+        return "personal";
     }
     //登录页面
     @RequestMapping("/")
@@ -33,7 +33,7 @@ public class WebController {
     //租房页面
     @RequestMapping("/detail")
     public String detail() {
-        return "single";
+        return "detail";
     }
     //测试
     @RequestMapping("/test")
@@ -41,4 +41,13 @@ public class WebController {
         return "test";
     }
 
+    @RequestMapping("/index")
+    public String idexHtml() {
+        return "/index";
+    }
+    //用户中心--房源发布页面
+    @RequestMapping("/room-publish")
+    public String roomPublish() {
+        return "/person/room-publish";
+    }
 }

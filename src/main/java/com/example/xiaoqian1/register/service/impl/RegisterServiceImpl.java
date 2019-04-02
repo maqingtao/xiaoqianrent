@@ -7,6 +7,9 @@ import com.example.xiaoqian1.register.repository.RegisterRepository;
 import com.example.xiaoqian1.register.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
 /**
 * @Author: maqingtao
 * @description: 注册
@@ -24,8 +27,8 @@ public class RegisterServiceImpl implements RegisterService {
     public String getRegisterState(User user) {
         /*判断一下数据库中是否有重复的用户名，避免重复*/
         if (userLoginRepository.findUser(user.getUsername(), user.getPassword()) == null) {
-registerRepository.save(user);
-//            registerRepository.setRegister(user.getUsername(), user.getPassword());
+            user.setUserID(UUID.randomUUID().toString());
+            registerRepository.save(user);
             return ConstantFiled.SUCCESS;
         }
         return ConstantFiled.ERROR;

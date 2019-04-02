@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -21,8 +22,13 @@ import java.io.Serializable;
 @Entity
 @Table(name = "room")
 public class RoomInformation extends Room implements Serializable {
+
+       @Transient
        private Integer minPrice;
+       @Transient
        private Integer maxPrice;
+       @Transient
        private Integer minArea;
+       @Transient
        private Integer maxArea;
 }

@@ -10,4 +10,6 @@ import java.io.Serializable;
 public interface UserLoginRepository extends JpaRepository<User,Serializable> {
     @Query(value = "select * from user s where s.username=?1 and s.password=?2", nativeQuery = true)
     User findUser(String username,String password);
+    @Query(value = "select * from user s where s.username=?1", nativeQuery = true)
+    User findUserID(String username);
 }

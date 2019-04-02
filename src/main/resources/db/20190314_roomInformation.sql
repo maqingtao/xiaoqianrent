@@ -8,7 +8,7 @@ create table `room`(
 `roomArea` char(20),
 `roomStructure` char(20),
 `roomPrice` char(20),
-`mainID` char(120)
+`mainID` char(120),
 `id`  bigint(20) NOT NULL AUTO_INCREMENT,
 PRIMARY KEY (`id`)
 )

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Single</title>
+<title>详情</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="js/jquery.min.js"></script>
@@ -19,7 +19,76 @@
 <meta name="keywords" content="Real Home Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+<script src="js/responsiveslides.min.js"></script>
+	<script>
+		window.onload=function () {
+		document.getElementById("username_msg").innerText =$.cookie('username')
+			getMessage()
+			getFacility()
+		}
+		function getFacility()
+		{
+            var mainID=getQueryString("mainID");
+            var callback = function (data) {
+                var lable=new Array("<h2><span  class='label label-default'>",
+					"<h2><span class='label label-primary'>",
+					"<h2><span  class='label label-success'>",
+					"<h2><span class='label label-info'>",
+					"<h2><span  class='label label-warning'>",
+                    "<h2><span  class='label label-danger'>")
+				var spans=document.getElementById("lable")
+                var result=JSON.stringify(data);
+                var facility=JSON.parse(result);
+                for(var key in facility){
+                    var r=Math.floor(Math.random()*5)
+                    var l=document.createElement("td");
+                    l.innerHTML=lable[r]+key+"</h2>"+"</span>";
+                    spans.appendChild(l)
+                }
+            }
+            $.postJSON('/api/getFacility',
+                {"mainID":mainID},callback);
+		}
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+        function getMessage()
+		{
+		    var mainID=getQueryString("mainID");
+            var callback = function (data) {
+                var result=JSON.stringify(data);
+                var information=JSON.parse(result);
+                document.getElementById("roomOriented").innerHTML=information[0].roomOriented;
+                document.getElementById("roomStructure").innerHTML=information[0].roomStructure;
+                document.getElementById("roomFloor").innerHTML=information[0].roomFloor;
+                document.getElementById("elevator").innerHTML=information[0].elevator;
+                document.getElementById("roomPrice").innerHTML=information[0].roomPrice;
+                document.getElementById("check_in_date").innerHTML=information[0].check_in_date;
+                document.getElementById("signing_time").innerHTML=information[0].signing_time;
+                document.getElementById("house_status").innerHTML=information[0].house_status;
+                document.getElementById("roomArea").innerHTML=information[0].roomArea+"m²";
+                document.getElementById("describe").innerHTML=information[0].describes;
+                document.getElementById("spaceRoom").innerHTML=information[0].spaceDimType;
 
+            }
+            $.postJSON('/api/getDetail',
+                {"mainID":mainID},callback);
+		}
+        $.postJSON = function(url, data,callback) {
+            return jQuery.ajax({
+                'type' : 'POST',
+                'url' : url,
+                'contentType' : 'application/json',
+                'data' : JSON.stringify(data),
+                'dataType' : 'json',
+                'success' : callback
+            });
+        };
+	</script>
 </head>
 <body>
 <!--header-->
@@ -27,12 +96,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<div class="container-fluid">
 				<nav class="pull">
 					<ul>
-						<li><a  href="index.html">Home</a></li>
-						<li><a  href="about.html">About Us</a></li>
-						<li><a  href="blog.html">Blog</a></li>
-						<li><a  href="terms.html">Terms</a></li>
-						<li><a  href="privacy.html">Privacy</a></li>
-						<li><a  href="contact.html">Contact</a></li>
+						<li><a  href="index">Home</a></li>
 					</ul>
 				</nav>			
 			</div>
@@ -42,13 +106,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<div class="container">
 		<!--logo-->
 			<div class="logo">
-				<h1><a href="index.html">REAL HOME</a></h1>
+				<h1><a href="/rentroom">小迁 租房</a></h1>
 			</div>
 		<!--//logo-->
 		<div class="top-nav">
 			<ul class="right-icons">
-				<li><span ><i class="glyphicon glyphicon-phone"> </i>+1384 757 546</span></li>
-				<li><a  href="login.html"><i class="glyphicon glyphicon-user"> </i>Login</a></li>
+				<li><span ><i class="glyphicon glyphicon-phone"> </i><font id="username_msg">欢迎 请登陆</font></span></li>
+				<li><a  href="/"><i class="glyphicon glyphicon-user"> </i>Login</a></li>
 				<li><a class="play-icon popup-with-zoom-anim" href="#small-dialog"><i class="glyphicon glyphicon-search"> </i> </a></li>
 				
 			</ul>
@@ -128,7 +192,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							removalDelay: 300,
 							mainClass: 'my-mfp-zoom-in'
 						});
-																						
+
 						});
 				</script>
 					
@@ -140,19 +204,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--//-->	
 <div class=" banner-buying">
 	<div class=" container">
-	<h3><span>Lor</span>em</h3> 
 	<!---->
 	<div class="menu-right">
 		 <ul class="menu">
-			<li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
+			<li class="item1"><a href="#">更多<i class="glyphicon glyphicon-menu-down"> </i> </a>
 			<ul class="cute">
-				<li class="subitem1"><a href="buy.html">Buy </a></li>
-				<li class="subitem2"><a href="buy.html">Rent </a></li>
-				<li class="subitem3"><a href="buy.html">Hostels </a></li>
-				<li class="subitem1"><a href="buy.html">Resale </a></li>
-				<li class="subitem2"><a href="loan.html">Home Loan</a></li>
-				<li class="subitem3"><a href="buy.html">Apartment </a></li>
-				<li class="subitem3"><a href="dealers.html">Dealers</a></li>
+				<li class="subitem1"><a href="/rentroom">主页 </a></li>
+				<li class="subitem1"><a href="/">登出 </a></li>
 			</ul>
 		</li>
 		</ul>
@@ -210,7 +268,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen" />
 
 <script>
-// Can also be used with $(document).ready()
 $(window).load(function() {
   $('.flexslider').flexslider({
     animation: "slide",
@@ -222,23 +279,23 @@ $(window).load(function() {
 <div class="buy-sin-single">
 			<div class="col-sm-5 middle-side immediate">
 					     <h4>房屋详细信息</h4>
-					     <p><span class="bath">面积</span>:<span class="two">2 BHK</span></p>
-					     <p><span class="bath">朝向</span>:<span class="two">2</span></p>
-					     <p><span class="bath">户型</span>:<span class="two">100 Sq.Yrds</span></p>
-					     <p><span class="bath">楼层</span>:<span class="two"> 150 Sq.Yrds</span></p>
-						 <p><span class="bath">电梯</span>:<span class="two">4 - 10 Years</span></p>
-						 <p><span class="bath">价格</span>:<span class="two"> 30-40 Lacs</span></p>
-				         <p><span class="bath">入住日期 </span>:<span class="two"> 30-40 Lacs</span></p>
-				         <p><span class="bath">签约时长 </span>:<span class="two"> 30-40 Lacs</span></p>
-				         <p><span class="bath">房屋状态 </span>:<span class="two"> 30-40 Lacs</span></p>
+				         <p><span class="bath">位置</span>:<span class="two text-info" id="roomSpace"></span></p>
+					     <p><span class="bath">面积</span>:<span class="two text-info" id="roomArea"></span></p>
+					     <p><span class="bath">朝向</span>:<span class="two text-info" id="roomOriented"></span></p>
+					     <p><span class="bath">户型</span>:<span class="two text-info" id="roomStructure"></span></p>
+					     <p><span class="bath">楼层</span>:<span class="two text-info" id="roomFloor"> </span></p>
+						 <p><span class="bath">电梯</span>:<span class="two text-info" id="elevator"></span></p>
+						 <p><span class="bath">价格</span>:<span class="two text-info" id="roomPrice"></span></p>
+				         <p><span class="bath3">入住日期 </span>:<span class="two text-info" id="check_in_date"></span></p>
+				         <p><span class="bath3">签约时长 </span>:<span class="two text-info" id="signing_time"></span></p>
+				         <p><span class="bath3">房屋状态 </span>:<span class="two text-info" id="house_status"></span></p>
 				<div class="right-side">
 							 <a href="contact.html" class="hvr-sweep-to-right more" >联系卖家</a>
 				</div>
 			</div>
 	        <div class="col-sm-7 buy-sin">
 					 	<h4>描述</h4>
-					 	<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature</p>
-					 	<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC </p>
+					    <p id="describe"></p>
 			</div>
 					 <div class="clearfix"> </div>
 					</div>
@@ -252,9 +309,18 @@ $(window).load(function() {
 		</div>
 	</div>
 
-<!---->
-<div class="container">
+<div class="container" style="height: 100px"></div>
+<div  class="panel  panel-info">
+	<div class="panel-heading">
+		<h3 class="panel-title">基础设施</h3>
+	</div>
+	<div class="panel-body">
+		<table>
+		<tr id="lable"></tr>
+	   </table>
+	</div>
 
 </div>
+<div class="container" style="height: 100px"></div>
 </body>
 </html>

@@ -3,16 +3,10 @@
 <head>
 	<title>主页</title>
 	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script src="js/jquery.min.js"></script>
-	<!-- Custom Theme files -->
-	<!--menu-->
 	<script src="js/scripts.js"></script>
 	<link href="css/styles.css" rel="stylesheet">
-	<!--//menu-->
-	<!--theme-style-->
 	<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-	<!--//theme-style-->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="keywords" content="Real Home Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
@@ -23,7 +17,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<script src="../templates/js/all.js"></script>
 	<!--//用户名添加-->
 	<script type="text/javascript">
-		var flag=false
       window.onload=function () {
           document.getElementById("username_msg").innerText =$.cookie('username')
           getAllCity()
@@ -146,7 +139,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
           row.appendChild(roomStructure);
 
 		  var detail=document.createElement('td');
-		  var str="detail?roomDimID="+h.mainID
+		  var str="detail?mainID="+h.mainID
           detail.innerHTML = "<a href='"+str+"'>查看详细信息</a>";
           row.appendChild(detail);
 		  return row
@@ -169,12 +162,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<div class="container-fluid">
 		<nav class="pull">
 			<ul>
-				<li><a  href="index.html">Home</a></li>
+				<li><a  href="personal.html">Home</a></li>
 				<li><a  href="about.html">About Us</a></li>
-				<li><a  href="blog.html">Blog</a></li>
-				<li><a  href="terms.html">Terms</a></li>
-				<li><a  href="privacy.html">Privacy</a></li>
-				<li><a  href="contact.html">Contact</a></li>
 			</ul>
 		</nav>
 	</div>
@@ -184,7 +173,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<div class="container">
 		<!--logo-->
 		<div class="logo">
-			<h1><a href="index.html">小迁 租房</a></h1>
+			<h1><a href="/rentroom">小迁 租房</a></h1>
 		</div>
 		<!--//logo-->
 		<div class="top-nav">
@@ -287,7 +276,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<ul class="menu">
 				<li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
 					<ul class="cute">
-						<li class="subitem2"><a href="#">Rent </a></li>
+						<li class="subitem2"><a href="/rentroom">租房 </a></li>
+						<li class="subitem2"><a href="/personal">用户主页 </a></li>
 					</ul>
 				</li>
 			</ul>
@@ -332,8 +322,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<h4>类型</h4>
 				<select class="in-drop" id="r_type">
 					<option selected value="-1">无限制</option>
-					<option value="10">长租</option>
-					<option value="11">短租</option>
+					<option value="10">合租</option>
+					<option value="11">整租</option>
 				</select>
 			</div>
 			<div class="clearfix"> </div>
