@@ -29,4 +29,16 @@ public class UserLoginServiceImpl implements UserLoginService {
             return ConstantFiled.SUCCESS;
         }
     }
+
+    /**
+     * @Author: maqingtao
+     * @description: 获取userid
+     * @create: 2019/4/4
+     **/
+
+    @Override
+    public String getUserID(User user) {
+        User userid=loginRepository.findUser(user.getUsername(),user.getPassword());
+        return userid.getUserID();
+    }
 }

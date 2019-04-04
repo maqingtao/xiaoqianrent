@@ -26,8 +26,7 @@ public class PropertyUtil {
         Map<String, String> map = new LinkedHashMap<>();
         String s[] = str.split(",");
         for (int i = 0; i < s.length; i++) {
-            String ss[] = s[i].split("\\|");
-            map.put(ss[0], ss[1]);
+            map.put(s[i],String.valueOf(i));
         }
         return map;
     }

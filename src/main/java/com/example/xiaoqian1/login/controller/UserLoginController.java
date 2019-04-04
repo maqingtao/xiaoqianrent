@@ -32,4 +32,10 @@ public class UserLoginController {
         }
         return loginState;
     }
+    @RequestMapping(value = "/getuserid",method = RequestMethod.POST, consumes = "application/json")
+    public String getUserID(@RequestBody User user) {
+        String userID=loginService.getUserID(user);
+
+        return userID;
+    }
 }

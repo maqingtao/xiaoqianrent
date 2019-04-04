@@ -1,6 +1,7 @@
 package com.example.xiaoqian1.user.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.example.xiaoqian1.common.ConstantFiled;
 import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
 import com.example.xiaoqian1.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,6 @@ public class UserController {
     @RequestMapping(value = "/roompublish", method = RequestMethod.POST, consumes = "application/json")
     public String createRoomPublish(@RequestBody RoomDetail roomDetail) {
         userService.saveRoomInformation(roomDetail);
-        return JSON.toJSONString("ok");
+        return JSON.toJSONString(ConstantFiled.SUCESS_STATUS);
     }
 }

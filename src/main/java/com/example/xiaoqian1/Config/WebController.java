@@ -50,4 +50,10 @@ public class WebController {
     public String roomPublish() {
         return "/person/room-publish";
     }
+
+    //用户中心--房源发布页面
+    @RequestMapping("/my-publish")
+    public String myPublish() {
+        return "/person/my-publish";
+    }
 }

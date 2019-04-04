@@ -18,10 +18,69 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <script src="js/responsiveslides.min.js"></script>
+    <script src="/static/js1/login.js"></script>
     <!--//用户名添加-->
     <script type="text/javascript">
         window.onload=function () {
-            document.getElementById("username_msg").innerText =$.cookie('username')
+            var userid=$.cookie('userid');
+            alert(userid)
+            var username=$.cookie('username');
+            if (typeof(username) != "undefined")
+            {
+                document.getElementById("username_msg").innerText =username
+            }
+            var username=document.getElementById("username_msg").innerText;
+            if (username!="欢迎 请登陆")
+            {
+                var p=document.getElementById("personal")
+                var userCenter=document.createElement("li");
+                var logOut=document.createElement("li");
+                userCenter.innerHTML="<li class='subitem1'><a href='personal'>个人中心</a></li>";
+                p.appendChild(userCenter)
+                logOut.innerHTML="<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
+                p.appendChild(logOut)
+            }
+        }
+        function getInformation() {
+            var callback = function (data) {
+                var result=JSON.stringify(data)
+                var jsonobj=JSON.parse(result);
+                var tbody=document.getElementById("room");
+                for(var i = 0;i < jsonobj.length; i++){ //遍历一下json数据
+                    var trow = getDataRow(jsonobj[i]); //定义一个方法,返回tr数据
+                    tbody.appendChild(trow);
+                }
+                table.appendChild(tbody)
+            }
+            $.postJSON('/api',{},callback);
+        }
+        function getDataRow(h) {
+            var row = document.createElement('tr');
+            var roomDimType = document.createElement('td');
+            roomDimType.innerHTML = h.roomDimType;
+            row.appendChild(roomDimType);
+
+            var spaceDimType = document.createElement('td');
+            spaceDimType.innerHTML = h.spaceDimType;
+            row.appendChild(spaceDimType);
+
+            var roomArea = document.createElement('td');
+            roomArea.innerHTML = h.roomArea+"m²";
+            row.appendChild(roomArea);
+
+            var roomPrice = document.createElement('td');
+            roomPrice.innerHTML = h.roomPrice+"/月";
+            row.appendChild(roomPrice);
+
+            var roomStructure = document.createElement('td');
+            roomStructure.innerHTML = h.roomStructure;
+            row.appendChild(roomStructure);
+
+            var detail=document.createElement('td');
+            var str="#?mainID="+h.mainID
+            detail.innerHTML = "<a href='"+str+"'>删除</a>";
+            row.appendChild(detail);
+            return row
         }
     </script>
 </head>
@@ -83,8 +142,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <ul class="menu">
                 <li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
                     <ul class="cute">
-                        <li class="subitem2"><a href="/rentroom">租房 </a></li>
-                        <li class="subitem2"><a href="/personal">用户主页 </a></li>
+                        <li class="subitem2"><a href="/rentroom">租赁信息 </a></li>
+                        <div id="personal"></div>
                     </ul>
                 </li>
             </ul>
@@ -134,13 +193,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             </li>
 
                             <li class="nav-item">
-                                <a href="layouts-fixed-sidebar.html" class="nav-link">
-                                    <i class="icon icon-target"></i>我的收藏
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="layouts-hidden-sidebar.html" class="nav-link">
-                                    <i class="icon icon-target"></i> Hidden Sidebar
+                                <a href="my-publish" class="nav-link">
+                                    <i class="icon icon-target"></i>我的发布
                                 </a>
                             </li>
                         </ul>
@@ -148,7 +202,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
                     <li class="nav-item nav-dropdown">
                         <a href="#" class="nav-link nav-dropdown-toggle">
-                            <i class="icon icon-graph"></i> Charts <i class="fa fa-caret-left"></i>
+                            <i class="icon icon-graph"></i> 我的收藏 <i class="fa fa-caret-left"></i>
                         </a>
 
                         <ul class="nav-dropdown-items">
@@ -175,7 +229,22 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             </nav>
         </div>
         <div class="content">
-            <div class="container-fluid"
+            <div class="container-fluid">
+                <table class="table" id="message">
+                    <thead>
+                    <tr>
+                        <th>房间类型</th>
+                        <th>地理位置</th>
+                        <th>居住面积</th>
+                        <th>价格</th>
+                        <th>房屋结构</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="room">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -186,27 +255,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script src="../static/vendor/chart.js/chart.min.js"></script>
 <script src="../static/js1/carbon.js"></script>
 <script src="../static/js1/demo.js"></script>
-<script type="text/javascript" src="../static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-<script type="text/javascript" src="../static/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
-<script type="text/javascript">
-    $('#check_in_date').datetimepicker({
-        setStartDate:'2018-01-01',
-        language:  'zh-CN',
-        format:'yyyy-mm-dd',
-        weekStart: 1, /*以星期一为一星期开始*/
-        todayBtn:  1,
-        autoclose: 1,
-        minView:2, /*精确到天*/
-        pickerPosition: "bottom-left"
-    }).on("changeDate",function(ev){
-        if(ev.date){
-            $("#datetimeEnd").datetimepicker('setStartDate', new Date(ev.date.valueOf()));
-        }else{
-            $("#datetimeEnd").datetimepicker('setStartDate',null);
-        }
-    });
-</script>
-<div class="container" style="height: 100px"></div>
+<div class="container" style="height: 100px">
+</div>
 
 </body>
 </html>

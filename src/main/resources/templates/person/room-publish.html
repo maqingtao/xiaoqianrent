@@ -18,11 +18,31 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <script src="js/responsiveslides.min.js"></script>
+    <script src="/static/js1/login.js"></script>
     <!--//用户名添加-->
     <script type="text/javascript">
         window.onload=function () {
-            document.getElementById("username_msg").innerText =$.cookie('username')
+            var username=$.cookie('username');
+            if (typeof(username) != "undefined")
+            {
+                document.getElementById("username_msg").innerText =username
+            }
+            var username=document.getElementById("username_msg").innerText;
+            if (username!="欢迎 请登陆")
+            {
+                var p=document.getElementById("personal")
+                var userCenter=document.createElement("li");
+                var logOut=document.createElement("li");
+                userCenter.innerHTML="<li class='subitem1'><a href='personal'>个人中心</a></li>";
+                p.appendChild(userCenter)
+                logOut.innerHTML="<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
+                p.appendChild(logOut)
+            }
             getAllCity();
+            //将提交信息绑定对话框
+            document.getElementById("sbt").onclick=function(){
+                $('#mymodal').modal('show')
+            }
         }
         function getAllCity() {
             var callback = function (data) {
@@ -57,16 +77,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             var callback = function (data) {
                 var result=JSON.stringify(data)
                 var status=JSON.parse(result);
-                alert(status)
-               if (status=="ok")
+               if (status=="200")
                {
-                   alert("发布成功")
                    location.href="personal"
                }
                else {
                    location.href="#"
                }
             }
+
             $.postJSON('/api/roompublish', {"roomDimID":roomDimID,"spaceDimID":spaceDimID,
             "roomArea":roomArea,"roomPrice":roomPrice,"roomOriented":roomOriented,
             "roomStructure":roomStructure,"roomFloor":roomFloor,"elevator":elevator,
@@ -149,12 +168,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <div class=" container">
         <h3><span>用户</span>中心</h3>
         <!---->
-        <div class="menu-right">
+            <div class="menu-right">
             <ul class="menu">
                 <li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
                     <ul class="cute">
-                        <li class="subitem2"><a href="/rentroom">租房 </a></li>
-                        <li class="subitem2"><a href="/personal">用户主页 </a></li>
+                        <li class="subitem1"><a href="/rentroom">招租信息</a></li>
+                        <div id="personal"></div>
                     </ul>
                 </li>
             </ul>
@@ -209,7 +228,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="layouts-hidden-sidebar.html" class="nav-link">
+                                <a href="my-publish.html" class="nav-link">
                                     <i class="icon icon-target"></i> Hidden Sidebar
                                 </a>
                             </li>
@@ -319,13 +338,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <div class="form-group">
                                 <label  class="col-sm-2 control-label">居住面积</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="roomArea" placeholder="住房使用面积">
+                                    <input type="text" onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" id="roomArea" placeholder="住房使用面积">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label  class="col-sm-2 control-label">价格</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="roomPrice" placeholder="租房价格">
+                                    <input type="text" onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" id="roomPrice" placeholder="租房价格/元">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -343,7 +362,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <div class="form-group">
                                 <label  class="col-sm-2 control-label">楼层</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="roomFloor" placeholder="楼层">
+                                    <input type="text" onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" id="roomFloor" placeholder="楼层/层">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -357,10 +376,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                 <div class="col-sm-10">
                                     <select class="form-control" id="signing_time">
                                         <option selected>1个月</option>
-                                        <option>2个月</option>
-                                        <option>3个月</option>
-                                        <option>4个月</option>
-                                        <option>5个月</option>
+                                        <option>2个月</option><option>3个月</option>
+                                        <option>4个月</option><option>6个月</option>
+                                        <option>8个月</option><option>10个月</option>
+                                        <option>一年</option><option>不限</option>
                                     </select>
                                 </div>
                             </div>
@@ -422,7 +441,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         </form>
                     </div>
                     <div>
-                        <button type="button" onclick="submits()" class="btn btn-primary btn-lg btn-block">提交信息</button>
+                        <button type="button" id="sbt" class="btn btn-primary btn-lg btn-block">提交信息</button>
                     </div>
                 </div>
             </div>
@@ -455,7 +474,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         }
     });
 </script>
-<div class="container" style="height: 100px"></div>
-
+<!--对话框组件-->
+<div class="modal" id="mymodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">发布租房信息</h4>
+            </div>
+            <div class="modal-body">
+                <p>是否确认发布招租信息?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="submits()">确定</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--引入对话框的cdn-->
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-transition.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-modal.js"></script>
 </body>
 </html>

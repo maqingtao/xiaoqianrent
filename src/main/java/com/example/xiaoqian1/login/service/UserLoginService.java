@@ -4,4 +4,5 @@ import com.example.xiaoqian1.login.bean.User;
 
 public interface UserLoginService {
     public String getLoginState(User user);
+    public String getUserID(User user);
 }
