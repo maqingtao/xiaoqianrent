@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,7 +34,9 @@ public class UserServiceImpl implements UserService {
         roomDetail.setSpaceDimType(SpaceDimType);
         String roomDimType = PropertyUtil.getRoomDimType(roomDetail.getRoomDimID());
         roomDetail.setRoomDimType(roomDimType);
-        String mainID=UUID.randomUUID().toString();//生成唯一识别房源的id
+        //使用时间戳作为唯一识别mainID
+        String timers=String.valueOf(System.currentTimeMillis());
+        String mainID=timers.substring(0,timers.length()-3);
         roomDetail.setMainID(mainID);
         //获取用户ID(不是用户名)
         String userID=userLoginRepository.findUserID(roomDetail.getUsername()).getUserID();
@@ -42,6 +45,25 @@ public class UserServiceImpl implements UserService {
         setRoom(roomDetail);
         userRepository.save(roomDetail);
     }
+   /**
+   * @Author: maqingtao
+   * @description: 根据userID查找我发布的房源
+   * @create: 2019/4/5
+   **/
+
+    @Override
+    public List<RoomInformation> getMyPublish(RoomInformation roomInformation) {
+        List<RoomInformation> list=roomInformationRepository.findMyPublishByUserID(
+                roomInformation.getUserID());
+        return list;
+    }
+
+    @Override
+    public void delMyPublish(RoomInformation roomInformation) {
+        roomInformationRepository.delRoomByMainID(roomInformation.getMainID());
+        roomInformationRepository.delRoomDetailByMainID(roomInformation.getMainID());
+    }
+
     /**
     * @Author: maqingtao
     * @description: 缩略表更新（发布房源后，缩略信息表）
@@ -54,4 +76,6 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(roomDetail,room);
         roomInformationRepository.save(room);
     }
+
+
 }

@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS `room`;
 create table `room`(
 `roomDimID` char(20),
+`userID` char(20),
 `roomDimType` char(20),
 `spaceDimID` char(20),
 `spaceDimType` char(20),

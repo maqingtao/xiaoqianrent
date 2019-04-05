@@ -23,7 +23,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script type="text/javascript">
         window.onload=function () {
             var userid=$.cookie('userid');
-            alert(userid)
             var username=$.cookie('username');
             if (typeof(username) != "undefined")
             {
@@ -40,11 +39,28 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 logOut.innerHTML="<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
                 p.appendChild(logOut)
             }
+            getInformation(userid)
         }
-        function getInformation() {
+        function confirm(mainID) {
+            document.getElementById("sbt-sure").onclick=function(){
+                del(mainID)
+            }
+            $('#mymodal').modal('show');
+
+        }
+        function del(mainID) {
             var callback = function (data) {
                 var result=JSON.stringify(data)
                 var jsonobj=JSON.parse(result);
+            }
+            $.postJSON('/api/delpublish',{"mainID":mainID},callback);
+            location.href="/my-publish"
+        }
+        function getInformation(userID) {
+            var callback = function (data) {
+                var result=JSON.stringify(data)
+                var jsonobj=JSON.parse(result);
+                var table=document.getElementById("message");
                 var tbody=document.getElementById("room");
                 for(var i = 0;i < jsonobj.length; i++){ //遍历一下json数据
                     var trow = getDataRow(jsonobj[i]); //定义一个方法,返回tr数据
@@ -52,7 +68,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 }
                 table.appendChild(tbody)
             }
-            $.postJSON('/api',{},callback);
+            $.postJSON('/api/mypublish',{"userID":userID},callback);
         }
         function getDataRow(h) {
             var row = document.createElement('tr');
@@ -77,11 +93,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             row.appendChild(roomStructure);
 
             var detail=document.createElement('td');
-            var str="#?mainID="+h.mainID
-            detail.innerHTML = "<a href='"+str+"'>删除</a>";
+            var mainID=h.mainID;
+            detail.innerHTML = "<a href='javascript:confirm("+mainID+");'>"+"删除"+"</a>"
             row.appendChild(detail);
             return row
         }
+        $.postJSON = function(url, data,callback) {
+            return jQuery.ajax({
+                'type' : 'POST',
+                'url' : url,
+                'contentType' : 'application/json',
+                'data' : JSON.stringify(data),
+                'dataType' : 'json',
+                'success' : callback
+            });
+        };
     </script>
 </head>
 <body>
@@ -257,6 +283,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script src="../static/js1/demo.js"></script>
 <div class="container" style="height: 100px">
 </div>
-
+<!--对话框组件-->
+<div class="modal" id="mymodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">提示</h4>
+            </div>
+            <div class="modal-body">
+                <p>确认删除?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="sbt-sure">是</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">否</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--引入对话框的cdn-->
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-transition.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-modal.js"></script>
 </body>
 </html>

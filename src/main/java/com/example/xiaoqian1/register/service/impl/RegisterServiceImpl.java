@@ -27,7 +27,9 @@ public class RegisterServiceImpl implements RegisterService {
     public String getRegisterState(User user) {
         /*判断一下数据库中是否有重复的用户名，避免重复*/
         if (userLoginRepository.findUser(user.getUsername(), user.getPassword()) == null) {
-            user.setUserID(UUID.randomUUID().toString());
+            String timers=String.valueOf(System.currentTimeMillis());
+            String userID=timers.substring(0,timers.length()-4);
+            user.setUserID(userID);
             registerRepository.save(user);
             return ConstantFiled.SUCCESS;
         }
