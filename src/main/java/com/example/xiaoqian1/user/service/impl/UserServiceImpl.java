@@ -1,10 +1,13 @@
 package com.example.xiaoqian1.user.service.impl;
 
+import com.example.xiaoqian1.common.ConstantFiled;
 import com.example.xiaoqian1.common.Dictionary.repository.CityDictionaryRepository;
 import com.example.xiaoqian1.login.repository.UserLoginRepository;
 import com.example.xiaoqian1.rent.bean.RoomInformation;
 import com.example.xiaoqian1.rent.repository.RoomInformationRepository;
 import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
+import com.example.xiaoqian1.upload.bean.ImagePath;
+import com.example.xiaoqian1.upload.repository.UploadRepository;
 import com.example.xiaoqian1.user.repository.UserRepository;
 import com.example.xiaoqian1.user.service.UserService;
 import com.example.xiaoqian1.util.DicUtil;
@@ -15,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,6 +29,8 @@ public class UserServiceImpl implements UserService {
     RoomInformationRepository roomInformationRepository;
      @Autowired
     UserLoginRepository userLoginRepository;
+     @Autowired
+    UploadRepository uploadRepository;
     @Override
     public void saveRoomInformation(RoomDetail roomDetail) {
         Map<String, String> city = DicUtil.getCityMap(cityDictionaryRepository.findAll());
@@ -34,10 +38,6 @@ public class UserServiceImpl implements UserService {
         roomDetail.setSpaceDimType(SpaceDimType);
         String roomDimType = PropertyUtil.getRoomDimType(roomDetail.getRoomDimID());
         roomDetail.setRoomDimType(roomDimType);
-        //使用时间戳作为唯一识别mainID
-        String timers=String.valueOf(System.currentTimeMillis());
-        String mainID=timers.substring(0,timers.length()-3);
-        roomDetail.setMainID(mainID);
         //获取用户ID(不是用户名)
         String userID=userLoginRepository.findUserID(roomDetail.getUsername()).getUserID();
         roomDetail.setUserID(userID);
@@ -62,6 +62,19 @@ public class UserServiceImpl implements UserService {
     public void delMyPublish(RoomInformation roomInformation) {
         roomInformationRepository.delRoomByMainID(roomInformation.getMainID());
         roomInformationRepository.delRoomDetailByMainID(roomInformation.getMainID());
+        uploadRepository.delImagePathByMainID(roomInformation.getMainID());
+    }
+
+    @Override
+    public String getImageName(String mainID) {
+        List<ImagePath> imagePaths=uploadRepository.getImagePathByMainID(mainID);
+        if (imagePaths==null||imagePaths.size()==0)
+        {
+            return ConstantFiled.ERROR;
+        }else {
+            return imagePaths.get(0).getImagePath();
+        }
+
     }
 
     /**
@@ -76,6 +89,5 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(roomDetail,room);
         roomInformationRepository.save(room);
     }
-
 
 }

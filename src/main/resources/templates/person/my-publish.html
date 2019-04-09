@@ -48,6 +48,22 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             $('#mymodal').modal('show');
 
         }
+        var image
+        function getImageName(mainID) {
+            var callback = function (data) {
+                var result=JSON.stringify(data)
+                var jsonobj=JSON.parse(result);
+                if (jsonobj==0)
+                {
+                    image="default.jpg"
+                }else {
+                    image=jsonobj;
+                }
+
+            }
+            $.postJSON('/api/getImageName',{"mainID":mainID},callback);
+             return image
+        }
         function del(mainID) {
             var callback = function (data) {
                 var result=JSON.stringify(data)
@@ -72,6 +88,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         }
         function getDataRow(h) {
             var row = document.createElement('tr');
+            var img=document.createElement('td');
+            var imageName=getImageName(h.mainID)
+            img.innerHTML="<img src='/roomImage/"+imageName+"'"+ "class='img-responsive' width='204' height='136'/>"
+            row.appendChild(img)
             var roomDimType = document.createElement('td');
             roomDimType.innerHTML = h.roomDimType;
             row.appendChild(roomDimType);
@@ -100,6 +120,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         }
         $.postJSON = function(url, data,callback) {
             return jQuery.ajax({
+                'async':false,
                 'type' : 'POST',
                 'url' : url,
                 'contentType' : 'application/json',
@@ -258,7 +279,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <div class="container-fluid">
                 <table class="table" id="message">
                     <thead>
-                    <tr>
+                    <tr class="vertical-align">
+                        <th></th>
                         <th>房间类型</th>
                         <th>地理位置</th>
                         <th>居住面积</th>

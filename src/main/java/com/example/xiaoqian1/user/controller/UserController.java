@@ -52,4 +52,10 @@ public class UserController {
         userService.delMyPublish(room);
         return JSON.toJSONString(ConstantFiled.SUCCESS);
     }
+
+    @RequestMapping(value = "/getImageName", method = RequestMethod.POST, consumes = "application/json")
+    public String getImageName(@RequestBody RoomInformation room) {
+        String fileName=userService.getImageName(room.getMainID());
+        return JSON.toJSONString(fileName);
+    }
 }

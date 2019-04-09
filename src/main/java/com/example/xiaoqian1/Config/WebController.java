@@ -43,7 +43,7 @@ public class WebController {
 
     @RequestMapping("/index")
     public String idexHtml() {
-        return "/index";
+        return "index";
     }
     //用户中心--房源发布页面
     @RequestMapping("/room-publish")

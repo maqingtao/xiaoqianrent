@@ -5,6 +5,10 @@
     <link href="../static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <script src="js/jquery.min.js"></script>
+    <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="../static/vendor/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="../static/vendor/font-awesome/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="../static/css/styles1.css">
@@ -19,6 +23,30 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <script src="js/responsiveslides.min.js"></script>
     <script src="/static/js1/login.js"></script>
+    <style>
+        .image-preview-input {
+            position: relative;
+            overflow: hidden;
+            margin: 0px;
+            color: #333;
+            background-color: #fff;
+            border-color: #ccc;
+        }
+        .image-preview-input input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+        .image-preview-input-title {
+            margin-left:2px;
+        }
+    </style>
     <!--//用户名添加-->
     <script type="text/javascript">
         window.onload=function () {
@@ -41,6 +69,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             getAllCity();
             //将提交信息绑定对话框
             document.getElementById("sbt").onclick=function(){
+
                 $('#mymodal').modal('show')
             }
         }
@@ -57,6 +86,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         }
         function submits()
         {
+            var mainID =(new Date()).valueOf();
             var city_sel=document.getElementById("r_city");
             var type_sel=document.getElementById("r_type");
             var spaceDimID=city_sel.options[city_sel.selectedIndex].value;//城市
@@ -79,10 +109,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 var status=JSON.parse(result);
                if (status=="200")
                {
-                   location.href="personal"
+                   upload(mainID)
                }
                else {
-                   location.href="#"
+                   $('#mymodal').modal('hide')
+                   alert("发布错误")
                }
             }
 
@@ -90,7 +121,30 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             "roomArea":roomArea,"roomPrice":roomPrice,"roomOriented":roomOriented,
             "roomStructure":roomStructure,"roomFloor":roomFloor,"elevator":elevator,
             "signing_time":signing_time,"check_in_date":check_in_date,"house_status":house_status,
-            "facility":facilities,"describes":describe,"username":username},callback);
+            "facility":facilities,"describes":describe,"username":username,"mainID":mainID},callback);
+            //图片上传
+
+        }
+        function upload(mainID) {
+            var file= $('#input-file')[0].files[0]
+            if (typeof(file) != "undefined") {
+                var formData = new FormData();
+                formData.append('mainID', mainID)
+                formData.append('uploadFile', file);
+                $.ajax({
+                    url: "api/upload",
+                    type: "POST",
+                    data: formData,
+                    processData: false, // tell jQuery not to process the data
+                    contentType: false, // tell jQuery not to set contentType
+                    success: function () {
+                        location.href = "personal"
+                    }
+                });
+            }else {
+                location.href = "personal"
+            }
+
         }
         function getFacilities()
         {
@@ -433,6 +487,27 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label  class="col-sm-2 control-label">图片上传</label>
+                                <div class="col-sm-10">
+                                    <div class=" col-sm-8 ">
+                                        <div class="input-group image-preview">
+                                            <input type="text" class="form-control image-preview-filename" disabled="disabled"> <!-- don't give a name === doesn't send on POST/GET -->
+                                            <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
+                                            <span class="glyphicon glyphicon-remove"></span> 取消
+                                        </button>
+                                       <div class="btn btn-default image-preview-input">
+                                       <span class="glyphicon glyphicon-folder-open"></span>
+                                       <span class="image-preview-input-title">上传</span>
+                                       <input type="file" id="input-file" accept="image/png, image/jpeg, image/gif" name="input-file-preview"/> <!-- rename it -->
+                                      </div>
+                                    </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
                                 <div class="form-group">
                                     <label  class="control-label">描述</label>
                                     <textarea class="form-control" rows="6" id="describe" placeholder="详情描述"></textarea>
@@ -449,7 +524,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     </div>
 </div>
 
-<script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--<script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>-->
 <script src="../static/vendor/popper.js/popper.min.js"></script>
 <script src="../static/vendor/chart.js/chart.min.js"></script>
 <script src="../static/js1/carbon.js"></script>
@@ -494,5 +569,65 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--引入对话框的cdn-->
 <script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-transition.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-modal.js"></script>
+<script>
+    $(document).on('click', '#close-preview', function(){
+        $('.image-preview').popover('hide');
+        // Hover befor close the preview
+        $('.image-preview').hover(
+            function () {
+                $('.image-preview').popover('show');
+            },
+            function () {
+                $('.image-preview').popover('hide');
+            }
+        );
+    });
+
+    $(function() {
+        // Create the close button
+        var closebtn = $('<button/>', {
+            type:"button",
+            text: 'x',
+            id: 'close-preview',
+            style: 'font-size: initial;',
+        });
+        closebtn.attr("class","close pull-right");
+        // Set the popover default content
+        $('.image-preview').popover({
+            trigger:'manual',
+            html:true,
+            title: "<strong>Preview</strong>"+$(closebtn)[0].outerHTML,
+            content: "There's no image",
+            placement:'bottom'
+        });
+        // Clear event
+        $('.image-preview-clear').click(function(){
+            $('.image-preview').attr("data-content","").popover('hide');
+            $('.image-preview-filename').val("");
+            $('.image-preview-clear').hide();
+            $('.image-preview-input input:file').val("");
+            $(".image-preview-input-title").text("重新上传");
+        });
+        // Create the preview image
+        $(".image-preview-input input:file").change(function (){
+            var img = $('<img/>', {
+                id: 'dynamic',
+                width:250,
+                height:200
+            });
+            var file = this.files[0];
+            var reader = new FileReader();
+            // Set preview image into the popover data-content
+            reader.onload = function (e) {
+                $(".image-preview-input-title").text("重新上传");
+                $(".image-preview-clear").show();
+                $(".image-preview-filename").val(file.name);
+                img.attr('src', e.target.result);
+                $(".image-preview").attr("data-content",$(img)[0].outerHTML).popover("show");
+            }
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
 </body>
 </html>
