@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,27 +26,30 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
     @RequestMapping(value = "/roompublish", method = RequestMethod.POST, consumes = "application/json")
     public String createRoomPublish(@RequestBody RoomDetail roomDetail) {
         userService.saveRoomInformation(roomDetail);
         return JSON.toJSONString(ConstantFiled.SUCESS_STATUS);
     }
+
     /**
-    * @Author: maqingtao
-    * @description: 我的发布
-    * @create: 2019/4/5
-    **/
+     * @Author: maqingtao
+     * @description: 我的发布
+     * @create: 2019/4/5
+     **/
 
     @RequestMapping(value = "/mypublish", method = RequestMethod.POST, consumes = "application/json")
     public String getMyPublish(@RequestBody RoomInformation room) {
-      List<RoomInformation> result=userService.getMyPublish(room);
+        List<RoomInformation> result = userService.getMyPublish(room);
         return JSON.toJSONString(result);
     }
+
     /**
-    * @Author: maqingtao
-    * @description: 删除发布信息
-    * @create: 2019/4/5
-    **/
+     * @Author: maqingtao
+     * @description: 删除发布信息
+     * @create: 2019/4/5
+     **/
 
     @RequestMapping(value = "/delpublish", method = RequestMethod.POST, consumes = "application/json")
     public String delMyPublish(@RequestBody RoomInformation room) {
@@ -55,7 +59,19 @@ public class UserController {
 
     @RequestMapping(value = "/getImageName", method = RequestMethod.POST, consumes = "application/json")
     public String getImageName(@RequestBody RoomInformation room) {
-        String fileName=userService.getImageName(room.getMainID());
+        String fileName = userService.getImageName(room.getMainID());
         return JSON.toJSONString(fileName);
+    }
+
+    /**
+     * @Author: maqingtao
+     * @description: detail页面获取图片
+     * @create: 2019/4/11
+     **/
+    @RequestMapping(value = "/getImageNameList", method = RequestMethod.POST, consumes = "application/json")
+    public String getImageNameList(@RequestBody RoomInformation room) {
+        ArrayList<String> result=userService.getImageNameList(room.getMainID());
+        String json=JSON.toJSONString(result);
+        return json;
     }
 }

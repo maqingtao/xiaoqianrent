@@ -78,7 +78,7 @@ public class RoomInformationServiceImpl implements RoomInformationService {
                 if (roomInformation.getMaxPrice() != null) {
                     if (roomInformation.getMaxPrice()==-1) {
                         predicate.getExpressions().add(criteriaBuilder.between(root.<Integer>get("roomPrice")
-                                , roomInformation.getMinPrice(), 999999));
+                                , roomInformation.getMinPrice(), 9999999));
                     } else {
                         predicate.getExpressions().add(criteriaBuilder.between(root.<Integer>get("roomPrice")
                                 , roomInformation.getMinPrice(), roomInformation.getMaxPrice()));

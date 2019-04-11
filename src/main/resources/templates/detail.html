@@ -10,8 +10,9 @@
 <!--menu-->
 <script src="js/scripts.js"></script>
 <link href="css/styles.css" rel="stylesheet">
-<!--//menu-->
-<!--theme-style-->
+<link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />	
 <!--//theme-style-->
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +27,51 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		document.getElementById("username_msg").innerText =$.cookie('username')
 			getMessage()
 			getFacility()
+			setImage()
 		}
+        var images
+        function getImageName(mainID) {
+            $.post= function(url, data,callback) {
+                return jQuery.ajax({
+                    'async':false,
+                    'type' : 'POST',
+                    'url' : url,
+                    'contentType' : 'application/json',
+                    'data' : JSON.stringify(data),
+                    'dataType' : 'json',
+                    'success' : callback
+                });
+            };
+            var callback = function (data) {
+                var result=JSON.stringify(data)
+                var jsonobj=JSON.parse(result);
+                if (jsonobj==0)
+                {
+                    images="default.jpg"
+                }else {
+                    images=jsonobj;
+                }
+            }
+            $.post('/api/getImageNameList',{"mainID":mainID},callback);
+            return images
+        }
+        //为轮播组件加入图片
+        function setImage() {
+		    var slides=new Array("First slide","Second slide","Third slide")
+		    var mainID=getQueryString("mainID")
+			var imageName=getImageName(mainID);
+			var imglist=document.getElementById("carousel");
+			var pictures="<div class='item active'>" +
+                "<img src='roomImage/"+imageName[0]+"'"+"alt='"+slides[0]+"'>" +
+                "</div>"
+			for (i=1;i<3;i++)
+			{
+                pictures=pictures+"<div class='item'>" +
+                    "<img src='roomImage/"+imageName[i]+"'"+"alt='"+slides[i]+"'>" +
+                    "</div>";
+			}
+            imglist.innerHTML=pictures
+        }
 		function getFacility()
 		{
             var mainID=getQueryString("mainID");
@@ -72,7 +117,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 document.getElementById("house_status").innerHTML=information[0].house_status;
                 document.getElementById("roomArea").innerHTML=information[0].roomArea+"m²";
                 document.getElementById("describe").innerHTML=information[0].describes;
-                document.getElementById("spaceRoom").innerHTML=information[0].spaceDimType;
+                // document.getElementById("spaceRoom").innerHTML=information[0].spaceDimType;
 
             }
             $.postJSON('/api/getDetail',
@@ -203,7 +248,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 <!--//-->	
 <div class=" banner-buying">
-	<div class=" container">
+	<div class="container">
 	<!---->
 	<div class="menu-right">
 		 <ul class="menu">
@@ -242,30 +287,30 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 <!--//header-->
 <!---->
-
+<!--轮播组件自动轮播-->
+<script>
+    $(function(){
+        $('#myCarousel').carousel({interval:4000});
+    })
+</script>
 <div class="container">
-	
 	<div class="buy-single-single">
 		<div class="col-md-9 single-box">
        <div class=" buying-top">
 		 <div class="flexslider">
-  <ul class="slides">
-    <li data-thumb="images/ss.jpg">
-      <img src="images/ss.jpg" />
-    </li>
-    <li data-thumb="images/ss1.jpg">
-      <img src="images/ss1.jpg" />
-    </li>
-    <li data-thumb="images/ss2.jpg">
-      <img src="images/ss2.jpg" />
-    </li>
-    <li data-thumb="images/ss3.jpg">
-      <img src="images/ss3.jpg" />
-    </li>
-  </ul>
+			 <div id="myCarousel" class="carousel slide">
+				 <!-- 轮播（Carousel）指标 -->
+				 <ol class="carousel-indicators">
+					 <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+					 <li data-target="#myCarousel" data-slide-to="1"></li>
+					 <li data-target="#myCarousel" data-slide-to="2"></li>
+				 </ol>
+				 <!-- 轮播（Carousel）项目 -->
+				 <div class="carousel-inner" id="carousel">
+				 </div>
+			 </div>
 </div>
-<!-- FlexSlider -->
-  <script defer src="js/jquery.flexslider.js"></script>
+<script defer src="js/jquery.flexslider.js"></script>
 <link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen" />
 
 <script>

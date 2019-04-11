@@ -9,7 +9,7 @@ public class MyConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/roomImage/**").addResourceLocations("file:D:/xiaoqian/xiaoqian1/roomImage/");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 }
 
