@@ -31,5 +31,7 @@ public class RoomInformation extends Room implements Serializable {
        @Transient
        private Integer maxArea;
 
+       @Transient
+       private String provinceID;
        private String userID;
 }

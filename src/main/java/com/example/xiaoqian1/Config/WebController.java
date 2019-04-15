@@ -51,9 +51,21 @@ public class WebController {
         return "/person/room-publish";
     }
 
-    //用户中心--房源发布页面
+    //用户中心--我的发布
     @RequestMapping("/my-publish")
     public String myPublish() {
         return "/person/my-publish";
+    }
+
+    //用户中心--房源收藏
+    @RequestMapping("/my-collect")
+    public String myCollect() {
+        return "/person/my-collect";
+    }
+
+    //用户中心--房源收藏
+    @RequestMapping("/my-information")
+    public String myInformation() {
+        return "/person/my-information";
     }
 }

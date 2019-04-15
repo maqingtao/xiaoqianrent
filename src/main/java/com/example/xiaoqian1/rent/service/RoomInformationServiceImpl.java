@@ -47,8 +47,7 @@ public class RoomInformationServiceImpl implements RoomInformationService {
     public Page<RoomInformation> getSelectInformation(Pageable pageable, RoomInformation r) {
         Page<RoomInformation> page = null;
         //添加无限制状态
-            page = informationRepository.findAll(getCondition(r), pageable);
-
+        page = informationRepository.findAll(getCondition(r), pageable);
         return page;
     }
 /**

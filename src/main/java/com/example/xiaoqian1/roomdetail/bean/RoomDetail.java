@@ -46,6 +46,9 @@ public class RoomDetail extends Room implements Serializable {
     //描述
     @JSONField(ordinal=9)
     private String describes;
+    //详细地址
+    @JSONField(ordinal=10)
+    private String address;
     @Transient
     private String username;
 }

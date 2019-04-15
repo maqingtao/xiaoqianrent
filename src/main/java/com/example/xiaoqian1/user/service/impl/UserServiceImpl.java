@@ -8,6 +8,8 @@ import com.example.xiaoqian1.rent.repository.RoomInformationRepository;
 import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
 import com.example.xiaoqian1.upload.bean.ImagePath;
 import com.example.xiaoqian1.upload.repository.UploadRepository;
+import com.example.xiaoqian1.user.bean.MyCollect;
+import com.example.xiaoqian1.user.repository.MyCollectRepository;
 import com.example.xiaoqian1.user.repository.UserRepository;
 import com.example.xiaoqian1.user.service.UserService;
 import com.example.xiaoqian1.util.DicUtil;
@@ -33,6 +35,8 @@ public class UserServiceImpl implements UserService {
     UserLoginRepository userLoginRepository;
     @Autowired
     UploadRepository uploadRepository;
+    @Autowired
+    MyCollectRepository myCollectRepository;
 
     @Override
     public void saveRoomInformation(RoomDetail roomDetail) {
@@ -54,7 +58,6 @@ public class UserServiceImpl implements UserService {
      * @description: 根据userID查找我发布的房源
      * @create: 2019/4/5
      **/
-
     @Override
     public List<RoomInformation> getMyPublish(RoomInformation roomInformation) {
         List<RoomInformation> list = roomInformationRepository.findMyPublishByUserID(
@@ -72,6 +75,7 @@ public class UserServiceImpl implements UserService {
         }
 
     }
+
     /*删除房源依赖的图片*/
     public void delImage(String mainID) {
         List<ImagePath> imagePaths = uploadRepository.getImagePathByMainID(mainID);
@@ -112,6 +116,31 @@ public class UserServiceImpl implements UserService {
             nameList.add("default.jpg");
         }
         return nameList;
+    }
+
+    /*保存收藏数据*/
+    @Override
+    public String setCollect(MyCollect myCollect) {
+        myCollectRepository.save(myCollect);
+        return ConstantFiled.SUCESS_STATUS;
+    }
+
+    /*删除收藏数据*/
+    @Override
+    public void delCollect(MyCollect myCollect) {
+        myCollectRepository.delCollectByMainID(myCollect.getUserID(), myCollect.getMainID());
+    }
+
+    /*查询收藏状态*/
+    @Override
+    public String findCollectStatus(MyCollect myCollect) {
+        List<MyCollect> myCollects = myCollectRepository.findCollectStatus(myCollect.getUserID(), myCollect.getMainID());
+        if (myCollects == null || myCollects.size() == 0) {
+            return ConstantFiled.FAILED_STATUS;
+        } else {
+            return ConstantFiled.SUCESS_STATUS;
+        }
+
     }
 
     /**

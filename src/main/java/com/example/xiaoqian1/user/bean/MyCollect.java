@@ -1,4 +1,4 @@
-package com.example.xiaoqian1.common.Dictionary.bean;
+package com.example.xiaoqian1.user.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -6,20 +6,22 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
+/**
+* @Author: maqingtao
+* @description: 我的收藏
+* @create: 2019/4/15
+**/
 @Setter
 @Getter
 @ToString
 @Entity
-@Table(name = "city_dic")
-public class City implements Serializable {
+@Table(name = "mycollect")
+public class MyCollect {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Integer id;
-    private String cityId;
-    private String cityName;
-    private String preID;
-
+    private String userID;
+    private String mainID;
 }

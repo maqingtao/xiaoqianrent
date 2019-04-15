@@ -72,23 +72,39 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 logOut.innerHTML = "<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
                 p.appendChild(logOut)
             }
-            getAllCity();
+            getAllProvince()
             //将提交信息绑定对话框
             document.getElementById("sbt").onclick = function () {
-
                 $('#mymodal').modal('show')
             }
         }
 
-        function getAllCity() {
+        function getAllProvince() {
             var callback = function (data) {
+                var r_province = document.getElementById("r_province");
+                var result = JSON.stringify(data)
+                var allProvince = JSON.parse(result);
+                for (var i = 0; i < allProvince.length; i++) { //遍历一下json数据
+                    r_province.add(new Option(allProvince[i].provinceName, allProvince[i].provinceId));
+                }
+                getCity()
+            }
+            $.postJSON('/api/getAllProvince', {"provinceID": ""}, callback);
+        }
+
+        function getCity() {
+            $("#r_city").find("option").remove();
+            var province_sel = document.getElementById("r_province");
+            var provinceID = province_sel.options[province_sel.selectedIndex].value;
+            var callback = function (data) {
+                var r_city = document.getElementById("r_city");
                 var result = JSON.stringify(data)
                 var allCity = JSON.parse(result);
-                for (var i = 0; i < allCity.length; i++) {
+                for (var i = 0; i < allCity.length; i++) { //遍历一下json数据
                     r_city.add(new Option(allCity[i].cityName, allCity[i].cityId));
                 }
             }
-            $.postJSON('/api/getAllCity', "", callback);
+            $.postJSON('/api/getAllCity', {"preID": provinceID}, callback);
 
         }
 
@@ -96,6 +112,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             var mainID = (new Date()).valueOf();
             var city_sel = document.getElementById("r_city");
             var type_sel = document.getElementById("r_type");
+            var address = document.getElementById("address").value;//详细地址
+            alert(address);
             var spaceDimID = city_sel.options[city_sel.selectedIndex].value;//城市
             var roomDimID = type_sel.options[type_sel.selectedIndex].value;//类型
             var roomArea = document.getElementById("roomArea").value;//房屋面积
@@ -125,18 +143,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
             $.postJSON('/api/roompublish', {
                 "roomDimID": roomDimID, "spaceDimID": spaceDimID,
-                "roomArea": roomArea, "roomPrice": roomPrice, "roomOriented": roomOriented,
+                "address": address, "roomArea": roomArea, "roomPrice": roomPrice, "roomOriented": roomOriented,
                 "roomStructure": roomStructure, "roomFloor": roomFloor, "elevator": elevator,
                 "signing_time": signing_time, "check_in_date": check_in_date, "house_status": house_status,
                 "facility": facilities, "describes": describe, "username": username, "mainID": mainID
             }, callback);
-            //图片上传
-
         }
 
+        //图片上传
         function upload(mainID) {
             var file = $('#input-file')[0].files
-            if (typeof(file) != "undefined") {
+            if (file.length > 0) {
                 for (i = 0; i < $('#input-file')[0].files.length; i++) {
                     var formData = new FormData();
                     formData.append('mainID', mainID)
@@ -153,10 +170,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     //由于上传需要一定时间所以暂时使用延迟跳转
                     setTimeout(function () {
                         location.href = "personal"
-                    },3000)
+                    }, 3000)
 
                 }
             } else {
+                $('#mymodal').modal('hide')
                 location.href = "personal"
             }
 
@@ -276,7 +294,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <nav class="sidebar-nav">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a href="index.html" class="nav-link">
+                        <a href="/personal" class="nav-link">
                             <i class="icon icon-speedometer"></i>个人中心
                         </a>
                     </li>
@@ -297,89 +315,27 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                     <i class="icon icon-target"></i>我的发布
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="my-publish.html" class="nav-link">
-                                    <i class="icon icon-target"></i> Hidden Sidebar
-                                </a>
-                            </li>
                         </ul>
                     </li>
 
                     <li class="nav-item nav-dropdown">
-                        <a href="#" class="nav-link nav-dropdown-toggle">
-                            <i class="icon icon-energy"></i> UI Kits <i class="fa fa-caret-left"></i>
+                        <a href="/my-collect" class="nav-link nav-dropdown-toggle">
+                            <i class="icon icon-graph"></i> 我的收藏<i class="fa fa-caret-left"></i>
                         </a>
 
                         <ul class="nav-dropdown-items">
                             <li class="nav-item">
-                                <a href="alerts.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Alerts
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="buttons.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Buttons
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="cards.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Cards
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="modals.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Modals
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="tabs.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Tabs
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="progress-bars.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Progress Bars
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="widgets.html" class="nav-link">
-                                    <i class="icon icon-energy"></i> Widgets
+                                <a href="/my-collect" class="nav-link">
+                                    <i class="icon icon-graph"></i> 收藏房源
                                 </a>
                             </li>
                         </ul>
                     </li>
-
-                    <li class="nav-item nav-dropdown">
-                        <a href="#" class="nav-link nav-dropdown-toggle">
-                            <i class="icon icon-graph"></i> Charts <i class="fa fa-caret-left"></i>
-                        </a>
-
-                        <ul class="nav-dropdown-items">
-                            <li class="nav-item">
-                                <a href="chartjs.html" class="nav-link">
-                                    <i class="icon icon-graph"></i> Chart.js
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
                     <li class="nav-item">
-                        <a href="forms.html" class="nav-link">
-                            <i class="icon icon-puzzle"></i> Forms
+                        <a href="/my-information" class="nav-link">
+                            <i class="icon icon-puzzle"></i> 个人信息
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="tables.html" class="nav-link">
-                            <i class="icon icon-grid"></i> Tables
-                        </a>
-                    </li>
-
                 </ul>
             </nav>
         </div>
@@ -388,9 +344,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="price">
                     <div class="price-grid">
                         <div class="col-sm-4 price-top">
+                            <h4>省份/直辖市</h4>
+                            <select class="in-drop" id="r_province" onchange="getCity()">
+                            </select>
+                        </div>
+                        <div class="col-sm-4 price-top">
                             <h4>城市</h4>
                             <select class="in-drop" id="r_city">
-                                <option selected value="-1">请选择</option>
                             </select>
                         </div>
                         <div class="col-sm-4 price-top">
@@ -405,6 +365,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     </div>
                     <div>
                         <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">详细地址</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="address" placeholder="输入详细地址 ">
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">居住面积</label>
                                 <div class="col-sm-10">
@@ -511,28 +477,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                 </div>
                             </div>
                             <div class="form-group">
-                                <!--<label  class="col-sm-2 control-label">图片上传</label>-->
-                                <!--<div class="col-sm-10">-->
-                                <!--<div class=" col-sm-8 ">-->
-                                <!--<div class="input-group image-preview">-->
-                                <!--<input type="text" class="form-control image-preview-filename" disabled="disabled"> &lt;!&ndash; don't give a name === doesn't send on POST/GET &ndash;&gt;-->
-                                <!--<span class="input-group-btn">-->
-                                <!--<button type="button" class="btn btn-default image-preview-clear" style="display:none;">-->
-                                <!--<span class="glyphicon glyphicon-remove"></span> 取消-->
-                                <!--</button>-->
-                                <!--<div class="btn btn-default image-preview-input">-->
-                                <!--<span class="glyphicon glyphicon-folder-open"></span>-->
-                                <!--<span class="image-preview-input-title">上传</span>-->
-                                <!--<input type="file" id="input-file" multiple="multiple" accept="image/png, image/jpeg, image/gif" name="input-file-preview"/> &lt;!&ndash; rename it &ndash;&gt;-->
-                                <!--<input type="file" name="img" multiple="multiple" />-->
-                                <!--</div>-->
-                                <!--</span>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                            </div>
-
-                            <div class="form-group">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">选择上传图片</label>
                                     <input type="file" id="input-file" multiple="multiple"/>
@@ -555,7 +499,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     </div>
 </div>
 
-<!--<script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>-->
 <script src="../static/vendor/popper.js/popper.min.js"></script>
 <script src="../static/vendor/chart.js/chart.min.js"></script>
 <script src="../static/js1/carbon.js"></script>
@@ -601,19 +544,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-transition.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-modal.js"></script>
 <script>
-    // $(document).on('click', '#close-preview', function(){
-    //     $('.image-preview').popover('hide');
-    //     // Hover befor close the preview
-    //     $('.image-preview').hover(
-    //         function () {
-    //             $('.image-preview').popover('show');
-    //         },
-    //         function () {
-    //             $('.image-preview').popover('hide');
-    //         }
-    //     );
-    // });
-
     $(function () {
         // Create the close button
         var closebtn = $('<button/>', {

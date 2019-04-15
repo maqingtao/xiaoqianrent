@@ -6,20 +6,17 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Setter
 @Getter
 @ToString
 @Entity
-@Table(name = "city_dic")
-public class City implements Serializable {
+@Table(name = "province_dic")
+public class Province {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Integer id;
-    private String cityId;
-    private String cityName;
-    private String preID;
-
+    private String provinceId;
+    private String provinceName;
 }

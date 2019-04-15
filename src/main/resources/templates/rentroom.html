@@ -34,19 +34,35 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			  logOut.innerHTML="<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
 			  p.appendChild(logOut)
 		  }
-          getAllCity()
+		  getAllProvince()
 		  getPageSize()
           getPageInformation(0)
           }
-	  function getAllCity() {
+	  function getAllProvince() {
           var callback = function (data) {
+              var r_province=document.getElementById("r_province");
+              var result=JSON.stringify(data)
+              var allProvince=JSON.parse(result);
+              for(var i = 0;i <allProvince.length; i++){ //遍历一下json数据
+                  r_province.add(new Option(allProvince[i].provinceName,allProvince[i].provinceId));
+              }
+              getCity()
+          }
+          $.postJSON('/api/getAllProvince',{"provinceID":""},callback);
+      }
+	  function getCity() {
+          $("#r_city").find("option").remove();
+          var province_sel=document.getElementById("r_province");
+          var provinceID=province_sel.options[province_sel.selectedIndex].value;
+          var callback = function (data) {
+              var r_city=document.getElementById("r_city");
               var result=JSON.stringify(data)
               var allCity=JSON.parse(result);
               for(var i = 0;i < allCity.length; i++){ //遍历一下json数据
                   r_city.add(new Option(allCity[i].cityName,allCity[i].cityId));
               }
           }
-          $.postJSON('/api/getAllCity',"",callback);
+          $.postJSON('/api/getAllCity',{"preID":provinceID},callback);
 
       }
 	  function page(pageNumber) {
@@ -70,22 +86,24 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			  var last=document.createElement('li'); // 生成一个 li元素
               var result=JSON.stringify(data)
               var pageSize=JSON.parse(result);
-              first.innerHTML= "<a href='javascript:page("+0+");'>"+"首页"+"</a>"
-              document.getElementById('page_num').appendChild(first);
-              for(var i=0;i<pageSize;i++)
-              {
-                  var elem_li = document.createElement('li'); // 生成一个 li元素
-				  var num=i+1
-                  elem_li.innerHTML= "<a href='javascript:page("+i+");'>"+num+"</a>"
-                  // 分页组件内容
-                  document.getElementById('page_num').appendChild(elem_li);
+              if (pageSize!=0) {
+                  first.innerHTML = "<a href='javascript:page(" + 0 + ");'>" + "首页" + "</a>"
+                  document.getElementById('page_num').appendChild(first);
+                  for (var i = 0; i < pageSize; i++) {
+                      var elem_li = document.createElement('li'); // 生成一个 li元素
+                      var num = i + 1
+                      elem_li.innerHTML = "<a href='javascript:page(" + i + ");'>" + num + "</a>"
+                      // 分页组件内容
+                      document.getElementById('page_num').appendChild(elem_li);
 
+                  }
+                  var lastPage = pageSize - 1;
+                  last.innerHTML = "<a href='javascript:page(" + lastPage + ");'>" + "尾页" + "</a>"
+                  document.getElementById('page_num').appendChild(last);
               }
-              var lastPage=pageSize-1;
-              last.innerHTML= "<a href='javascript:page("+lastPage+");'>"+"尾页"+"</a>"
-              document.getElementById('page_num').appendChild(last);
           }
-
+          var province_sel=document.getElementById("r_province");
+          var provinceID=province_sel.options[province_sel.selectedIndex].value;
           var city_sel=document.getElementById("r_city");
           var type_sel=document.getElementById("r_type");
           var low_price_sel=document.getElementById("low_price");
@@ -100,7 +118,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
           var max_area=max_area_sel.options[max_area_sel.selectedIndex].value
           $.postJSON('/api/getPageSize', {"roomDimID":roomDimID,"spaceDimID":spaceDimID,
               "minPrice":l_price,"maxPrice":h_price,
-              "minArea":min_area,"maxArea":max_area},callback);
+              "minArea":min_area,"maxArea":max_area,"provinceID":provinceID},callback);
       }
       function getPageInformation(pageNumber) {
           var callback = function (data) {
@@ -108,12 +126,24 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
               var jsonobj=JSON.parse(result);
               var table=document.getElementById("message");
               var tbody=document.getElementById("room");
-              for(var i = 0;i < jsonobj.length; i++){ //遍历一下json数据
-                  var trow = getDataRow(jsonobj[i]); //定义一个方法,返回tr数据
-                  tbody.appendChild(trow);
-              }
-              table.appendChild(tbody)
+              if (jsonobj!="404")
+			  {
+                  for(var i = 0;i < jsonobj.length; i++){ //遍历一下json数据
+                      var trow = getDataRow(jsonobj[i]); //定义一个方法,返回tr数据
+                      tbody.appendChild(trow);
+                  }
+                  table.appendChild(tbody)
+			  }
+			  else {
+                  // var warns=document.createElement("span")
+                  // warns.innerText="无数据"
+                  // tbody.appendChild(warns);
+                  // table.appendChild(tbody)
+			  }
+
           }
+          var province_sel=document.getElementById("r_province");
+          var provinceID=province_sel.options[province_sel.selectedIndex].value;
           var city_sel=document.getElementById("r_city");
           var type_sel=document.getElementById("r_type");
           var low_price_sel=document.getElementById("low_price");
@@ -129,7 +159,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
           $.postJSON('/api/getSelectMessage/'+pageNumber,
               {"roomDimID":roomDimID,"spaceDimID":spaceDimID,
 				  "minPrice":l_price,"maxPrice":h_price,
-				  "minArea":min_area,"maxArea":max_area},callback);
+				  "minArea":min_area,"maxArea":max_area,"provinceID":provinceID},callback);
       }
       function getDataRow(h) {
           var row = document.createElement('tr');
@@ -200,9 +230,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="hero fa-navicon fa-2x nav_slide_button" id="hero">
 					<a href="#"><i class="glyphicon glyphicon-menu-hamburger"></i> </a>
 				</div>
-				<!---
-				<a href="#" class="right_bt" id="activator"><i class="glyphicon glyphicon-menu-hamburger"></i>  </a>
-			--->
 			</div>
 			<div class="clearfix"> </div>
 			<!---pop-up-box---->
@@ -223,11 +250,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         removalDelay: 300,
                         mainClass: 'my-mfp-zoom-in'
                     });
-
                 });
 			</script>
-
-
 		</div>
 		<div class="clearfix"> </div>
 	</div>
@@ -239,13 +263,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<!---->
 		<div class="menu-right">
 			<ul class="menu">
-				<li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
+				<li class="item1"><a href="#">Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
 					<ul class="cute">
 						<li class="subitem1"><a href="/rentroom">招租信息</a></li>
 						<div id="personal">
-							<!--<li class="subitem1"><a href="/personal">个人中心</a></li>-->
 						</div>
-						<!--<li class="subitem1"><a href="/">登出 </a></li>-->
 					</ul>
 				</li>
 			</ul>
@@ -281,9 +303,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<div class="price">
 		<div class="price-grid">
 			<div class="col-sm-4 price-top">
+				<h4>省份/直辖市</h4>
+				<select class="in-drop" id="r_province" onchange="getCity()">
+				</select>
+			</div>
+			<div class="col-sm-4 price-top">
 				<h4>城市</h4>
 				<select class="in-drop" id="r_city">
-					<option selected value="-1">无限制</option>
 				</select>
 			</div>
 			<div class="col-sm-4 price-top">
@@ -377,6 +403,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 </div>
 </div>
-<!--//footer-->
+<div class="container" style="height: 100px">
 </body>
 </html>

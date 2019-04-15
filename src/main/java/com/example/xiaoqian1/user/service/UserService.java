@@ -2,7 +2,7 @@ package com.example.xiaoqian1.user.service;
 
 import com.example.xiaoqian1.rent.bean.RoomInformation;
 import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
-import org.springframework.web.multipart.MultipartFile;
+import com.example.xiaoqian1.user.bean.MyCollect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,4 +13,7 @@ public interface UserService {
      void delMyPublish(RoomInformation roomInformation);
      String getImageName(String mainID);
      ArrayList<String> getImageNameList(String mainID);
+     String setCollect(MyCollect myCollect);
+     void delCollect(MyCollect myCollect);
+     String findCollectStatus(MyCollect myCollect);
 }
