@@ -19,4 +19,8 @@ public interface MyCollectRepository extends JpaRepository<MyCollect, Serializab
     @Modifying
     @Query(value = "delete  from  mycollect  where mycollect.userID=?1 and mycollect.mainID=?2", nativeQuery = true)
     void delCollectByMainID(String userID, String mainID);
+
+    //查询收藏
+    @Query(value = "select * from mycollect m where m.userID=?1", nativeQuery = true)
+    List<MyCollect> findMyCollect(String userID);
 }

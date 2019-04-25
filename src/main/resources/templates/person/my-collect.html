@@ -20,24 +20,100 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script src="js/responsiveslides.min.js"></script>
     <!--//用户名添加-->
     <script type="text/javascript">
-        window.onload=function () {
-            var username=$.cookie('username');
-            if (typeof(username) != "undefined")
-            {
-                document.getElementById("username_msg").innerText =username
+        window.onload = function () {
+            var userid = $.cookie('userid');
+            var username = $.cookie('username');
+            if (typeof(username) != "undefined") {
+                document.getElementById("username_msg").innerText = username
             }
-            var username=document.getElementById("username_msg").innerText;
-            if (username!="欢迎 请登陆")
-            {
-                var p=document.getElementById("personal")
-                var userCenter=document.createElement("li");
-                var logOut=document.createElement("li");
-                userCenter.innerHTML="<li class='subitem1'><a href='personal'>个人中心</a></li>";
+            var username = document.getElementById("username_msg").innerText;
+            if (username != "欢迎 请登陆") {
+                var p = document.getElementById("personal")
+                var userCenter = document.createElement("li");
+                var logOut = document.createElement("li");
+                userCenter.innerHTML = "<li class='subitem1'><a href='personal'>个人中心</a></li>";
                 p.appendChild(userCenter)
-                logOut.innerHTML="<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
+                logOut.innerHTML = "<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
                 p.appendChild(logOut)
             }
+            getInformation(userid)
         }
+
+        var image
+
+        function getImageName(mainID) {
+            var callback = function (data) {
+                var result = JSON.stringify(data)
+                var jsonobj = JSON.parse(result);
+                if (jsonobj == 0) {
+                    image = "default.jpg"
+                } else {
+                    image = jsonobj;
+                }
+
+            }
+            $.postJSON('/api/getImageName', {"mainID": mainID}, callback);
+            return image
+        }
+        function getInformation(userID) {
+            var callback = function (data) {
+                var result = JSON.stringify(data)
+                var jsonobj = JSON.parse(result);
+                var table = document.getElementById("message");
+                var tbody = document.getElementById("room");
+                for (var i = 0; i < jsonobj.length; i++) { //遍历一下json数据
+                    var trow = getDataRow(jsonobj[i]); //定义一个方法,返回tr数据
+                    tbody.appendChild(trow);
+                }
+                table.appendChild(tbody)
+            }
+            $.postJSON('/api/getmycollect', {"userID": userID}, callback);
+        }
+
+        function getDataRow(h) {
+            var row = document.createElement('tr');
+            var img = document.createElement('td');
+            var imageName = getImageName(h.mainID)
+            img.innerHTML = "<img src='/roomImage/" + imageName + "'" + "class='img-responsive' width='204' height='136'/>"
+            row.appendChild(img)
+            var roomDimType = document.createElement('td');
+            roomDimType.innerHTML = h.roomDimType;
+            row.appendChild(roomDimType);
+
+            var spaceDimType = document.createElement('td');
+            spaceDimType.innerHTML = h.spaceDimType;
+            row.appendChild(spaceDimType);
+
+            var roomArea = document.createElement('td');
+            roomArea.innerHTML = h.roomArea + "m²";
+            row.appendChild(roomArea);
+
+            var roomPrice = document.createElement('td');
+            roomPrice.innerHTML = h.roomPrice + "/月";
+            row.appendChild(roomPrice);
+
+            var roomStructure = document.createElement('td');
+            roomStructure.innerHTML = h.roomStructure;
+            row.appendChild(roomStructure);
+
+            var detail=document.createElement('td');
+            var str="detail?mainID="+h.mainID
+            detail.innerHTML = "<a href='"+str+"'>查看详细信息</a>";
+            row.appendChild(detail);
+            return row
+        }
+
+        $.postJSON = function (url, data, callback) {
+            return jQuery.ajax({
+                'async': false,
+                'type': 'POST',
+                'url': url,
+                'contentType': 'application/json',
+                'data': JSON.stringify(data),
+                'dataType': 'json',
+                'success': callback
+            });
+        };
     </script>
 </head>
 <body>
@@ -180,6 +256,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         </div>
         <div class="content">
             <div class="container-fluid">
+                <table class="table" id="message">
+                    <thead>
+                    <tr class="vertical-align">
+                        <th></th>
+                        <th>房间类型</th>
+                        <th>地理位置</th>
+                        <th>居住面积</th>
+                        <th>价格</th>
+                        <th>房屋结构</th>
+                        <th>详情</th>
+                    </tr>
+                    </thead>
+                    <tbody id="room">
+                    </tbody>
+                </table>
         </div>
     </div>
 </div>

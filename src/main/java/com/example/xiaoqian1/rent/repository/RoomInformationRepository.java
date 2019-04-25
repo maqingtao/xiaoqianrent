@@ -20,6 +20,9 @@ public interface RoomInformationRepository extends JpaRepository<RoomInformation
     @Query(value = "select * from room s where s.userID=?1", nativeQuery = true)
     List<RoomInformation> findMyPublishByUserID(String userID);
 
+    @Query(value = "select * from room s where s.mainID=?1", nativeQuery = true)
+    RoomInformation findRoomByMainID(String mainID);
+
     /**
      * @Author: maqingtao
      * @description: 删除

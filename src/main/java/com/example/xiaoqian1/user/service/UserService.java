@@ -16,4 +16,5 @@ public interface UserService {
      String setCollect(MyCollect myCollect);
      void delCollect(MyCollect myCollect);
      String findCollectStatus(MyCollect myCollect);
+     List<RoomInformation> getMyCollects(RoomInformation roomInformation);
 }

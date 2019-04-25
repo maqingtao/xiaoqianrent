@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /*获取我的收藏部分信息*/
+    @RequestMapping(value = "/getmycollect", method = RequestMethod.POST, consumes = "application/json")
+    public String getMyCollect(@RequestBody RoomInformation room) {
+        List<RoomInformation> result= userService.getMyCollects(room);
+        return JSON.toJSONString(result);
+    }
+    /*发布房源*/
     @RequestMapping(value = "/roompublish", method = RequestMethod.POST, consumes = "application/json")
     public String createRoomPublish(@RequestBody RoomDetail roomDetail) {
         userService.saveRoomInformation(roomDetail);
@@ -68,8 +76,8 @@ public class UserController {
      **/
     @RequestMapping(value = "/getImageNameList", method = RequestMethod.POST, consumes = "application/json")
     public String getImageNameList(@RequestBody RoomInformation room) {
-        ArrayList<String> result=userService.getImageNameList(room.getMainID());
-        String json=JSON.toJSONString(result);
+        ArrayList<String> result = userService.getImageNameList(room.getMainID());
+        String json = JSON.toJSONString(result);
         return json;
     }
 }

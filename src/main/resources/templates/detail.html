@@ -7,6 +7,7 @@
     <script src="js/jquery.min.js"></script>
     <!-- Custom Theme files -->
     <!--menu-->
+    <script src="../static/js1/login.js"></script>
     <script src="js/scripts.js"></script>
     <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
@@ -142,6 +143,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             $.postJSON('/api/getDetail',
                 {"mainID": mainID}, callback);
         }
+
         function setCollectStatus() {
             var mainID = getQueryString("mainID");
             var userID = $.cookie('userid');
@@ -156,9 +158,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     collect.innerHTML = "<button type='button' class='btn btn-danger'  id='r_collect' onclick='cancel_collect()'>已收藏/取消收藏</button>";
                 }
             }
-            $.postJSON('/api/collectstatus',
-                {"mainID": mainID, "userID": userID}, callback);
+            if (typeof(userID) != "undefined"&&userID!="") {
+                $.postJSON('/api/collectstatus',
+                    {"mainID": mainID, "userID": userID}, callback);
+            } else {
+                var collect = document.getElementById("collect")
+                collect.innerHTML = "<button type='button' onclick='logout()' class='btn btn-danger'>登录后收藏/登录</button>";
+            }
+
         }
+
+
         function cancel_collect() {
             var mainID = getQueryString("mainID");
             var userID = $.cookie('userid');
@@ -170,6 +180,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             $.postJSON('/api/cancelcollect',
                 {"mainID": mainID, "userID": userID}, callback);
         }
+
         function collect_room() {
             var mainID = getQueryString("mainID");
             var userID = $.cookie('userid');
@@ -396,7 +407,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     });
                 </script>
             </div>
-            <div class="buy-sin-single">
+            <div class="buy-sin-single" id="ss">
                 <div class="col-sm-5 middle-side immediate">
                     <h4>房屋详细信息</h4>
                     <p><span class="bath">位置</span>:<span class="two text-info" id="address"></span></p>

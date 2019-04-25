@@ -145,6 +145,23 @@ public class UserServiceImpl implements UserService {
 
     /**
      * @Author: maqingtao
+     * @description: 获取我的收藏信息
+     * @create: 2019/4/16
+     **/
+
+    @Override
+    public List<RoomInformation> getMyCollects(RoomInformation roomInformation) {
+        List<RoomInformation> result=new ArrayList<>();
+        List<MyCollect> lists=myCollectRepository.findMyCollect(roomInformation.getUserID());
+        for (MyCollect m:lists)
+        {
+            result.add(roomInformationRepository.findRoomByMainID(m.getMainID()));
+        }
+        return result;
+    }
+
+    /**
+     * @Author: maqingtao
      * @description: 缩略表更新（发布房源后，缩略信息表）
      * @create: 2019/4/3
      **/
