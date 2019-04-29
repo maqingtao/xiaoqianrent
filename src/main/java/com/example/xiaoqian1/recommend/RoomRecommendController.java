@@ -1,7 +1,9 @@
 package com.example.xiaoqian1.recommend;
 
+import com.alibaba.fastjson.JSON;
 import com.example.xiaoqian1.login.bean.User;
 import com.example.xiaoqian1.recommend.Service.RoomRecommendService;
+import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,13 +29,10 @@ public class RoomRecommendController {
     RoomRecommendService roomRecommendService;
 
     @RequestMapping(value = "/myRoomRecommend", method = RequestMethod.POST, consumes = "application/json")
-    public List<UserCollect> getRegister(@RequestBody User user) {
+    public String getRegister(@RequestBody User user) {
         List<UserCollect> all = new LinkedList<>();
-        Set<UserCollect> result = roomRecommendService.getRecommend(user);
-        Iterator<UserCollect> userCollectIterator = result.iterator();
-        while (userCollectIterator.hasNext()) {
-            all.add(userCollectIterator.next());
-        }
-        return all;
+        List<RoomDetail> result = roomRecommendService.getRecommend(user);
+        String json = JSON.toJSONString(result);
+        return json;
     }
 }

@@ -1,15 +1,28 @@
 package com.example.xiaoqian1.recommend;
 
+import com.example.xiaoqian1.common.ConstantFiled;
 import com.example.xiaoqian1.login.bean.User;
 import com.example.xiaoqian1.recommend.Service.RoomRecommendService;
 import com.example.xiaoqian1.rent.bean.RoomInformation;
 import com.example.xiaoqian1.rent.repository.RoomInformationRepository;
+import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
+import com.example.xiaoqian1.roomdetail.repository.RoomDetailRepository;
+import com.example.xiaoqian1.upload.bean.ImagePath;
+import com.example.xiaoqian1.upload.repository.UploadRepository;
 import com.example.xiaoqian1.user.bean.MyCollect;
 import com.example.xiaoqian1.user.repository.MyCollectRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
+
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.rmi.CORBA.Util;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -22,9 +35,12 @@ public class RoomRecommendImpl implements RoomRecommendService {
     //获取redis方法模板
     @Autowired
     RedisTemplate<String, UserCollect> template;
-
+    @Autowired
+    RoomDetailRepository roomDetailRepository;
+    @Autowired
+    UploadRepository uploadRepository;
     @Override
-    public Set<UserCollect> getRecommend(User user) {
+    public List<RoomDetail> getRecommend(User user) {
         List<MyCollect> allCollect = myCollectRepository.findMyCollect(user.getUserID());
         List<String> mainidList = new LinkedList<>();
         Map<String, Integer> divPrice = new LinkedHashMap<>();
@@ -76,8 +92,33 @@ public class RoomRecommendImpl implements RoomRecommendService {
             result.add(userCollect);
         }
         setSimilar_item(result);
-        Set<UserCollect> recommendRoom=getRoomScoreTopN(result, user.getUserID());
-        return recommendRoom;
+        Set<UserCollect> recommendRoom = getRoomScoreTopN(result, user.getUserID());
+        return getRecommendRoom(recommendRoom);
+    }
+
+    /**
+     * @Author: maqingtao
+     * @description: 获取推荐房源的详细信息
+     * @create: 2019/4/26
+     **/
+    public List<RoomDetail> getRecommendRoom(Set<UserCollect> userCollects) {
+        List<RoomDetail> roomDetails=new LinkedList<>();
+        Iterator<UserCollect> userCollectIterator = userCollects.iterator();
+        while (userCollectIterator.hasNext()) {
+            UserCollect u=new UserCollect();
+            //这里需要用一个工具方法将数据写出来
+            BeanUtils.copyProperties(userCollectIterator.next(),u);
+            RoomDetail roomDetail=roomDetailRepository.getRoomDetailByMainID(u.getMainID());
+            List<ImagePath> imagePath=uploadRepository.getImagePathByMainID(u.getMainID());
+            if (imagePath==null||imagePath.size()==0)
+            {
+                roomDetail.setImageName(ConstantFiled.BASIC_PATH);
+            }else {
+                roomDetail.setImageName(imagePath.get(0).getImagePath());
+            }
+            roomDetails.add(roomDetail);
+        }
+       return roomDetails;
     }
 
     /**
@@ -208,5 +249,31 @@ public class RoomRecommendImpl implements RoomRecommendService {
             }
         }
         return divTypeCount;
+    }
+
+    private Specification<RoomDetail> getCondition(RoomDetail r) {
+        Specification<RoomDetail> sp = new Specification<RoomDetail>() {
+            @Override
+            public Predicate toPredicate(Root<RoomDetail> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                // 创建 Predicate
+                Predicate predicate = criteriaBuilder.conjunction();
+                // 组装条件
+                //租房类型
+                if (r.getRoomDimID() != null
+                        && !r.getRoomDimID().equals("-1")) {
+                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("roomDimID"), r.getRoomDimID()));
+                }
+                //地理位置
+                if (r.getSpaceDimID() != null
+                        && !r.getSpaceDimID().equals("-1")) {
+                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("spaceDimID"), r.getSpaceDimID()));
+                }
+                if (r.getMainID() != null) {
+                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("mainID"), r.getMainID()));
+                }
+                return predicate;
+            }
+        };
+        return sp;
     }
 }

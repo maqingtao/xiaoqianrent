@@ -48,6 +48,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             getFacility()
             setImage()
             setCollectStatus()
+            getRecommendMessage()
         }
         var images
 
@@ -75,7 +76,37 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             $.post('/api/getImageNameList', {"mainID": mainID}, callback);
             return images
         }
+        /**
+        * @Author: maqingtao
+        * @description: 获取推荐算法信息
+        * @create: 2019/4/26
+        **/
 
+        function getRecommendMessage() {
+            var userID= $.cookie('userid');
+            var callback = function (data) {
+                var result = JSON.stringify(data)
+                var jsonobj = JSON.parse(result);
+                var recommend=document.getElementById("recommend");
+                var str=''
+                for (i=0;i<jsonobj.length;i++)
+                {
+                    var detail="detail?mainID="+jsonobj[i].mainID
+                    str=str+"<div class='single-box-img'>" +
+                        "<div class='box-img'>" +
+                        "<a href='"+detail+"'><img class='img-responsive' src='roomImage/"+jsonobj[i].imageName+"' alt=''></a>" +
+                        "</div>" +
+                        "<div class='box-text'>" +
+                        "<p><a href='"+detail+"'>"+jsonobj[i].address+"</a></p>" +
+                        "<a href='"+detail+"' class='in-box'>详情</a>" +
+                        "</div>" +
+                        "<div class='clearfix'> </div>" +
+                        "</div>"
+                }
+                recommend.innerHTML=str
+            }
+            $.post('api/myRoomRecommend', {"userID": userID}, callback);
+        }
         //为轮播组件加入图片
         function setImage() {
             var slides = new Array("First slide", "Second slide", "Third slide")
@@ -434,6 +465,19 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         </div>
 
         <div class="col-md-3">
+            <div class="single-box-right right-immediate" id="recommend">
+                <h4>喜欢推荐</h4>
+                <!--<div class="single-box-img ">-->
+                    <!--<div class="box-img">-->
+                        <!--<a href="single.html"><img class="img-responsive" src="images/sl.jpg" alt=""></a>-->
+                    <!--</div>-->
+                    <!--<div class="box-text">-->
+                        <!--<p><a href="single.html">Lorem ipsum dolor sit amet</a></p>-->
+                        <!--<a href="single.html" class="in-box">详情</a>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"> </div>-->
+                <!--</div>-->
+            </div>
 
         </div>
         <div class="clearfix"></div>

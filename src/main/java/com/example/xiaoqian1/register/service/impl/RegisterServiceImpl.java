@@ -26,7 +26,7 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public String getRegisterState(User user) {
         /*判断一下数据库中是否有重复的用户名，避免重复*/
-        if (userLoginRepository.findUser(user.getUsername(), user.getPassword()) == null) {
+        if (userLoginRepository.findUser(user.getUsername()) == null) {
             String timers=String.valueOf(System.currentTimeMillis());
             String userID=timers.substring(0,timers.length()-4);
             user.setUserID(userID);

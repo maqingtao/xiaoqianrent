@@ -5,8 +5,8 @@
     <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all"/>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="js/jquery.min.js"></script>
-    <!-- Custom Theme files -->
-    <!--menu-->
+    <link rel="stylesheet" href="/static/css/bootstrapValidator.css"/>
+    <script type="text/javascript" src="/static/js/bootstrapValidator.js"></script>
     <script src="js/scripts.js"></script>
     <link href="css/styles.css" rel="stylesheet">
     <!--//menu-->
@@ -30,14 +30,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             $("#register_btn").click(function () {
                 var username = document.getElementById("name").value;
                 var password = document.getElementById("pwd").value;
-                alert(username + "" + password)
                 var callback = function (data) {
                     var result = JSON.stringify(data)
                     if (result == '1') {
-                        alert("注册成功")
+
+                        location.href="/"
                     }
                 }
-                $.postJSON('/api/register', {"username": username, "password": password}, callback)
+                if ($("#myForm").data("bootstrapValidator").isValid())
+                {
+                    $.postJSON('/api/register', {"username": username, "password": password}, callback)
+                }
             });
         })
 
@@ -55,21 +58,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </head>
 <body>
 <!--header-->
-<div class="navigation">
-    <div class="container-fluid">
-        <nav class="pull">
-            <ul>
-                <li><a href="index">Home</a></li>
-                <li><a href="about">About Us</a></li>
-                <li><a href="blog">Blog</a></li>
-                <li><a href="terms">Terms</a></li>
-                <li><a href="privacy">Privacy</a></li>
-                <li><a href="contact">Contact</a></li>
-            </ul>
-        </nav>
-    </div>
-</div>
-
 <div class="header">
     <div class="container">
         <!--logo-->
@@ -81,16 +69,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <ul class="right-icons">
                 <li><span id="username_msg"><i class="glyphicon glyphicon-phone"> </i>游客 欢迎您!</span></li>
                 <li><a href="/"><i class="glyphicon glyphicon-user"> </i>Login</a></li>
-                <li><a class="play-icon popup-with-zoom-anim" href="#small-dialog"><i
-                        class="glyphicon glyphicon-search"> </i> </a></li>
             </ul>
             <div class="nav-icon">
                 <div class="hero fa-navicon fa-2x nav_slide_button" id="hero">
                     <a href="#"><i class="glyphicon glyphicon-menu-hamburger"></i> </a>
                 </div>
-                <!---
-                <a href="#" class="right_bt" id="activator"><i class="glyphicon glyphicon-menu-hamburger"></i>  </a>
-            --->
             </div>
             <div class="clearfix"></div>
             <!---pop-up-box---->
@@ -129,13 +112,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <ul class="menu">
                 <li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
                     <ul class="cute">
-                        <li class="subitem1"><a href="rentroom.html">Buy </a></li>
-                        <li class="subitem2"><a href="rentroom.html">Rent </a></li>
-                        <li class="subitem3"><a href="rentroom.html">Hostels </a></li>
-                        <li class="subitem1"><a href="rentroom.html">Resale </a></li>
-                        <li class="subitem2"><a href="loan.html">Home Loan</a></li>
-                        <li class="subitem3"><a href="rentroom.html">Apartment </a></li>
-                        <li class="subitem3"><a href="mainroom.html">Dealers</a></li>
+                        <li class="subitem1"><a href="rentroom">招租信息</a></li>
                     </ul>
                 </li>
             </ul>
@@ -169,12 +146,19 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <h3>注册</h3>
         <div class="login-top">
             <div class="form-info">
-                <form>
-                    <input type="text" placeholder="Name" required="" id="name">
-                    <input type="password" placeholder="Password " required="" id="pwd">
-
+                <form id="myForm">
+                    <div class="form-group">
+                        <input type="text" placeholder="Name" required="" name="username" id="name">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="Password " required="" name="password" id="pwd">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="ConfirmPassword" required="" name="confirmPassword"
+                               id="confirmPassword">
+                    </div>
                     <label class="hvr-sweep-to-right">
-                        <input type="button" value="注册" id="register_btn">
+                        <input type="button" value="注册" class="btn btn-primary" id="register_btn">
                     </label>
                 </form>
                 <p>已经有账号? <a href="/">请登陆</a></p>
@@ -200,6 +184,61 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#myForm').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                username: {
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        }
+                    }
+                },
+                confirmPassword: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        },
+                        identical: {
+                            field: 'password',
+                            message: '两次密码不一致'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+<!--对话框组件-->
+<div class="modal" id="mymodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">注册</h4>
+            </div>
+            <div class="modal-body">
+                <p>注册成功</p>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--引入对话框的cdn-->
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-transition.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-modal.js"></script>
 <!--//footer-->
 </body>
 </html>

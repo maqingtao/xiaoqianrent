@@ -1,197 +1,342 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>小迁租房</title>
-<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-<script src="js/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-<script src="js/scripts.js"></script>
-<link href="css/styles.css" rel="stylesheet">
-<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="Real Home Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-	<!--进行值的传递-->
-	<script type="text/javascript">
-		//用户名显示
-		// 登录验证
-        $(function(){
-            $("#login_sub").click(function(){
-                var username=document.getElementById("name").value;
-                var password=document.getElementById("pwd").value;
+    <title>小迁租房</title>
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all"/>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="js/scripts.js"></script>
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <link rel="stylesheet" href="/static/css/bootstrapValidator.css"/>
+    <script type="text/javascript" src="/static/js/bootstrapValidator.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content="Real Home Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
 
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <style>
+        #box2 {
+            margin-top: 1.5%;
+        }
+
+        input {
+            border-left: none;
+        }
+    </style>
+    <!--进行值的传递-->
+    <script type="text/javascript">
+        window.onload = function () {
+            drawPic()
+        }
+
+        /**生成一个随机数**/
+        function randomNum(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+
+        /**生成一个随机色**/
+        function randomColor(min, max) {
+            var r = randomNum(min, max);
+            var g = randomNum(min, max);
+            var b = randomNum(min, max);
+            return "rgb(" + r + "," + g + "," + b + ")";
+        }
+
+        var verification_code = '';
+
+        function getVerification_code() {
+            return verification_code;
+        }
+
+        /**绘制验证码图片**/
+        function drawPic() {
+            verification_code = ''
+            var canvas = document.getElementById("canvas");
+            var width = canvas.width;
+            var height = canvas.height;
+            var ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'bottom';
+            /**绘制背景色**/
+            ctx.fillStyle = randomColor(180, 240); //颜色若太深可能导致看不清
+            ctx.fillRect(0, 0, width, height);
+            /**绘制文字**/
+            var str = 'ABCEFGHJKLMNPQRSTWXYZ0123456789';
+            for (var i = 0; i < 4; i++) {
+                var txt = str[randomNum(0, str.length)];
+                verification_code = verification_code + txt;
+                ctx.fillStyle = randomColor(50, 160);  //随机生成字体颜色
+                ctx.font = randomNum(15, 40) + 'px SimHei'; //随机生成字体大小
+                var x = 10 + i * 25;
+                var y = randomNum(25, 45);
+                var deg = randomNum(-45, 45);
+                //修改坐标原点和旋转角度
+                ctx.translate(x, y);
+                ctx.rotate(deg * Math.PI / 180);
+                ctx.fillText(txt, 0, 0);
+                //恢复坐标原点和旋转角度
+                ctx.rotate(-deg * Math.PI / 180);
+                ctx.translate(-x, -y);
+            }
+            /**绘制干扰线**/
+            for (var i = 0; i < 8; i++) {
+                ctx.strokeStyle = randomColor(40, 180);
+                ctx.beginPath();
+                ctx.moveTo(randomNum(0, width), randomNum(0, height));
+                ctx.lineTo(randomNum(0, width), randomNum(0, height));
+                ctx.stroke();
+            }
+            /**绘制干扰点**/
+            for (var i = 0; i < 100; i++) {
+                ctx.fillStyle = randomColor(0, 255);
+                ctx.beginPath();
+                ctx.arc(randomNum(0, width), randomNum(0, height), 1, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        //用户名显示
+        // 登录验证
+        $(function () {
+            $("#login_sub").click(function () {
+                var username = document.getElementById("name").value;
+                var password = document.getElementById("pwd").value;
+                var verification = getVerification_code().toLowerCase();
+                var code = document.getElementById("code");
                 var callback = function (data) {
-                    var result=JSON.stringify(data)
-					if (result=='1')
-                    {
-                        $.cookie('username',username);
+                    var result = JSON.stringify(data)
+                    if (result == '1') {
+                        $.cookie('username', username);
                         getUserID()
-                        location.href="rentroom"
+                        location.href = "rentroom"
                     }
                     else {
                         document.getElementById("username_msg").innerText = "密码或用户名错误";
-					}
+                    }
                 }
-                $.postJSON('/api/logins',{"username":username,"password":password},callback)
+                if (verification == code.value.toLowerCase()) {
+                    $.postJSON('/api/logins', {"username": username, "password": password}, callback)
+                } else {
+                    drawPic()
+                }
             });
         })
-		//获取用户id
-        function getUserID()
-		{
-            var username=document.getElementById("name").value;
-            var password=document.getElementById("pwd").value;
+
+        //获取用户id
+        function getUserID() {
+            var username = document.getElementById("name").value;
+            var password = document.getElementById("pwd").value;
             var callback = function (data) {
-                var userid=JSON.stringify(data)
-                $.cookie('userid',userid);
+                var userid = JSON.stringify(data)
+                $.cookie('userid', userid);
             }
-            $.postJSON('/api/getuserid',{"username":username,"password":password},callback)
-		}
-        $.postJSON = function(url, data,callback) {
+            $.postJSON('/api/getuserid', {"username": username, "password": password}, callback)
+        }
+
+        $.postJSON = function (url, data, callback) {
             return jQuery.ajax({
-                'type' : 'POST',
-                'url' : url,
-                'contentType' : 'application/json',
-                'data' : JSON.stringify(data),
-                'dataType' : 'json',
-                'success' : callback
+                'type': 'POST',
+                'url': url,
+                'contentType': 'application/json',
+                'data': JSON.stringify(data),
+                'dataType': 'json',
+                'success': callback
             });
         };
-	</script>
+    </script>
 </head>
 <body>
 <!--header-->
-	<div class="navigation">
-			<div class="container-fluid">
-				<nav class="pull">
-					<ul>
-						<li><a  href="rentroom">租房</a></li>
-					</ul>
-				</nav>			
-			</div>
-		</div>
+<div class="navigation">
+    <div class="container-fluid">
+        <nav class="pull">
+            <ul>
+                <li><a href="rentroom">租房</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
 
 <div class="header">
-	<div class="container">
-		<!--logo-->
-			<div class="logo">
-				<h1><a href="index">小迁 租房</a></h1>
-			</div>
-		<!--//logo-->
-		<div class="top-nav">
-			<ul class="right-icons">
-				<li><span id="username_title"><i class="glyphicon glyphicon-phone"> </i>游客 欢迎您!</span></li>
-				<li><a  href="/"><i class="glyphicon glyphicon-user"> </i>登录</a></li>
-			</ul>
-			<div class="nav-icon">
-				<div class="hero fa-navicon fa-2x nav_slide_button" id="hero">
-						<a href="#"><i class="glyphicon glyphicon-menu-hamburger"></i> </a>
-					</div>
-			</div>
-		<div class="clearfix"> </div>
-			<!---pop-up-box---->    
-				<link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all"/>
-				<script src="js/jquery.magnific-popup.js" type="text/javascript"></script>
-				 <script>
-						$(document).ready(function() {
-						$('.popup-with-zoom-anim').magnificPopup({
-							type: 'inline',
-							fixedContentPos: false,
-							fixedBgPos: true,
-							overflowY: 'auto',
-							closeBtnInside: true,
-							preloader: false,
-							midClick: true,
-							removalDelay: 300,
-							mainClass: 'my-mfp-zoom-in'
-						});
-																						
-						});
-				</script>
+    <div class="container">
+        <!--logo-->
+        <div class="logo">
+            <h1><a href="index">小迁 租房</a></h1>
+        </div>
+        <!--//logo-->
+        <div class="top-nav">
+            <ul class="right-icons">
+                <li><span id="username_title"><i class="glyphicon glyphicon-phone"> </i>游客 欢迎您!</span></li>
+                <li><a href="/"><i class="glyphicon glyphicon-user"> </i>登录</a></li>
+            </ul>
+            <div class="nav-icon">
+                <div class="hero fa-navicon fa-2x nav_slide_button" id="hero">
+                    <a href="#"><i class="glyphicon glyphicon-menu-hamburger"></i> </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <!---pop-up-box---->
+            <link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all"/>
+            <script src="js/jquery.magnific-popup.js" type="text/javascript"></script>
+            <script>
+                $(document).ready(function () {
+                    $('.popup-with-zoom-anim').magnificPopup({
+                        type: 'inline',
+                        fixedContentPos: false,
+                        fixedBgPos: true,
+                        overflowY: 'auto',
+                        closeBtnInside: true,
+                        preloader: false,
+                        midClick: true,
+                        removalDelay: 300,
+                        mainClass: 'my-mfp-zoom-in'
+                    });
 
-	
-		</div>
-		<div class="clearfix"> </div>
-		</div>	
+                });
+            </script>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </div>
 </div>
-<!--//-->	
+<!--//-->
 <div class=" banner-buying">
-	<div class=" container">
-		<h3><span>小迁之家</span></h3>
-	<!---->
-	<div class="menu-right">
-		 <ul class="menu">
-			<li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
-			<ul class="cute">
-				<li class="subitem1"><a href="rentroom">招租信息</a></li>
-			</ul>
-		</li>
-		</ul>
-	</div>
-	<div class="clearfix"> </div>
-		<!--initiate accordion-->
-		<script type="text/javascript">
-			$(function() {
-			    var menu_ul = $('.menu > li > ul'),
-			           menu_a  = $('.menu > li > a');
-			    menu_ul.hide();
-			    menu_a.click(function(e) {
-			        e.preventDefault();
-			        if(!$(this).hasClass('active')) {
-			            menu_a.removeClass('active');
-			            menu_ul.filter(':visible').slideUp('normal');
-			            $(this).addClass('active').next().stop(true,true).slideDown('normal');
-			        } else {
-			            $(this).removeClass('active');
-			            $(this).next().stop(true,true).slideUp('normal');
-			        }
-			    });
-			
-			});
-		</script>
-	</div>
+    <div class=" container">
+        <h3><span>小迁之家</span></h3>
+        <!---->
+        <div class="menu-right">
+            <ul class="menu">
+                <li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
+                    <ul class="cute">
+                        <li class="subitem1"><a href="rentroom">招租信息</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+        <!--initiate accordion-->
+        <script type="text/javascript">
+            $(function () {
+                var menu_ul = $('.menu > li > ul'),
+                    menu_a = $('.menu > li > a');
+                menu_ul.hide();
+                menu_a.click(function (e) {
+                    e.preventDefault();
+                    if (!$(this).hasClass('active')) {
+                        menu_a.removeClass('active');
+                        menu_ul.filter(':visible').slideUp('normal');
+                        $(this).addClass('active').next().stop(true, true).slideDown('normal');
+                    } else {
+                        $(this).removeClass('active');
+                        $(this).next().stop(true, true).slideUp('normal');
+                    }
+                });
+
+            });
+        </script>
+    </div>
 </div>
 <!--//header-->
 <!--contact-->
 <div class="login-right">
-	<div class="container">
-		<h3>用户登录</h3>
-		<div class="login-top">
-				<div class="form-info">
-					<form>
-						<input type="text" class="text" placeholder="Username" required="" id="name"><font id="username_msg" style="color: red"></font>
-						<input type="password"  placeholder="Password" required="" id="pwd">
-						 <label class="hvr-sweep-to-right">
-				           	<input type="button" value="登录" id="login_sub" style="width: 150px">
-				           </label>
-					</form>
-				</div>
-			<div class="create">
-				<h4>还没有账号?</h4>
-				<a class="hvr-sweep-to-right" href="/createAccount">创建账号</a>
-				<div class="clearfix"> </div>
-			</div>
-	</div>
-</div>
+    <div class="container">
+        <h3>用户登录</h3>
+        <div class="login-top">
+            <div class="form-info">
+                <form id="defaultForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" id="name" placeholder="Username"/><font
+                            id="username_msg" style="color: red"></font>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required=""
+                               id="pwd">
+                    </div>
+                    <div class="form-group" id="box2">
+                        <input type="text" name="recommend_code" class="form-control" placeholder="请输入图形验证码"
+                               id="code"/>
+                        <div>
+                        </div>
+                        <span><canvas id="canvas" width="120" height="45"></canvas>
+						    <a href="javascript:drawPic()" id="changeImg">看不清，换一张</a></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="hvr-sweep-to-right">
+                            <button type="button" id="login_sub" class="btn btn-primary" style="width: 150px">登录
+                            </button>
+                        </div>
+                    </div>
+                    <!--<label class="hvr-sweep-to-right">-->
+                    <!--<input type="button" value="登录" id="login_sub" style="width: 150px">-->
+                    <!--</label>-->
+                </form>
+            </div>
+            <div class="create">
+                <h4>还没有账号?</h4>
+                <a class="btn btn-primary" href="/createAccount">创建账号</a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
 </div>
 <!--//contact-->
 <!--footer-->
 <div class="footer">
-	<div class="container">
-		<div class="footer-top-at">
-		<div class="clearfix"> </div>
-		</div>
-	</div>
-	<div class="footer-bottom">
-		<div class="container">
-			<div class="col-md-4 footer-logo">
-				<h2><a href="personal.html">小迁 您的住房管家</a></h2>
-			</div>
-		<div class="clearfix"> </div>
-	 	</div>
-	</div>
+    <div class="container">
+        <div class="footer-top-at">
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="col-md-4 footer-logo">
+                <h2><a href="personal.html">小迁 您的住房管家</a></h2>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
 </div>
-<!--//footer-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#defaultForm').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                username: {
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        }
+                    }
+                },
+                recommend_code: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入验证码'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

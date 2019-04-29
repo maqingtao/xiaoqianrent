@@ -190,26 +190,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script src="../static/vendor/chart.js/chart.min.js"></script>
 <script src="../static/js1/carbon.js"></script>
 <script src="../static/js1/demo.js"></script>
-<script type="text/javascript" src="../static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-<script type="text/javascript" src="../static/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
-<script type="text/javascript">
-    $('#check_in_date').datetimepicker({
-        setStartDate:'2018-01-01',
-        language:  'zh-CN',
-        format:'yyyy-mm-dd',
-        weekStart: 1, /*以星期一为一星期开始*/
-        todayBtn:  1,
-        autoclose: 1,
-        minView:2, /*精确到天*/
-        pickerPosition: "bottom-left"
-    }).on("changeDate",function(ev){
-        if(ev.date){
-            $("#datetimeEnd").datetimepicker('setStartDate', new Date(ev.date.valueOf()));
-        }else{
-            $("#datetimeEnd").datetimepicker('setStartDate',null);
-        }
-    });
-</script>
 <div class="container" style="height: 100px"></div>
 
 </body>

@@ -51,4 +51,6 @@ public class RoomDetail extends Room implements Serializable {
     private String address;
     @Transient
     private String username;
+    @Transient
+    private String imageName;
 }
