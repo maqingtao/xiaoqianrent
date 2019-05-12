@@ -112,7 +112,7 @@ public class RoomRecommendImpl implements RoomRecommendService {
             List<ImagePath> imagePath=uploadRepository.getImagePathByMainID(u.getMainID());
             if (imagePath==null||imagePath.size()==0)
             {
-                roomDetail.setImageName(ConstantFiled.BASIC_PATH);
+                roomDetail.setImageName(ConstantFiled.BASIC_IMAGE_NAME);
             }else {
                 roomDetail.setImageName(imagePath.get(0).getImagePath());
             }
@@ -219,7 +219,8 @@ public class RoomRecommendImpl implements RoomRecommendService {
         divAreaCount.put("FourthLevel", 0);
         divAreaCount.put("FifthLevel", 0);
         for (RoomInformation roomInformation : roomInformations) {
-            Integer area = Integer.valueOf(roomInformation.getRoomArea());
+            String room_area=roomInformation.getRoomArea().replace("平方米","");
+            Float area = Float.valueOf(room_area);
             if (area < 20) {
                 divAreaCount.put("FirstLevel", divAreaCount.get("FirstLevel") + 1);
             } else if (area >= 20 && area < 30) {

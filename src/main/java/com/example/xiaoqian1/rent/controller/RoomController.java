@@ -32,7 +32,7 @@ public class RoomController {
     @RequestMapping(value = "/getPageMessage/{page}", method = RequestMethod.POST, consumes = "application/json")
     public String getPageMessage(@PathVariable("page") int page, @RequestBody RoomInformation information) {
         //设定
-        PageRequest pageRequest = PageRequest.of(page, 4);
+        PageRequest pageRequest = PageRequest.of(page, 8);
         Page<RoomInformation> informationPage = roomInformationService.getPageInformation(pageRequest);
         List<RoomInformation> list = informationPage.getContent();
         String json = JSON.toJSONString(list);
@@ -47,7 +47,7 @@ public class RoomController {
 
     @RequestMapping(value = "/getPageSize", method = RequestMethod.POST, consumes = "application/json")
     public String getPageNumber(@RequestBody RoomInformation information) {
-        PageRequest pageRequest = PageRequest.of(0, 4);
+        PageRequest pageRequest = PageRequest.of(0, 8);
         Page<RoomInformation> informationPage = roomInformationService.getSelectInformation(pageRequest, information);
         int number = informationPage.getTotalPages();
         String json = JSON.toJSONString(number);
@@ -58,7 +58,7 @@ public class RoomController {
     public String getSelectMessage(@PathVariable("page") int page, @RequestBody RoomInformation information) {
         String json;
         //设定
-        PageRequest pageRequest = PageRequest.of(page, 4);
+        PageRequest pageRequest = PageRequest.of(page, 8);
         Page<RoomInformation> informationPage = roomInformationService.getSelectInformation(pageRequest, information);
         List<RoomInformation> list = informationPage.getContent();
         if (list == null || list.size() == 0) {

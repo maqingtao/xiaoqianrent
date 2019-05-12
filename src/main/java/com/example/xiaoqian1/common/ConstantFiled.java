@@ -8,4 +8,5 @@ public class ConstantFiled {
     public static String FAILED_STATUS="404";
     //存储图片的基本路径（暂时先写在本地）
     public static String BASIC_PATH="D:\\xiaoqian\\xiaoqian1\\roomImage";
+    public static String BASIC_IMAGE_NAME="default.jpg";
 }

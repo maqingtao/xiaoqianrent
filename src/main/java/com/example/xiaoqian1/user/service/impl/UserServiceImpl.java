@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
     public String getImageName(String mainID) {
         List<ImagePath> imagePaths = uploadRepository.getImagePathByMainID(mainID);
         if (imagePaths == null || imagePaths.size() == 0) {
-            return ConstantFiled.ERROR;
+            return ConstantFiled.BASIC_IMAGE_NAME;
         } else {
             return imagePaths.get(0).getImagePath();
         }
