@@ -4,4 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadService {
     void setImage(MultipartFile uploadFile,String mainID);
+    void upLoadUserFace(MultipartFile uploadFile,String userID);
 }

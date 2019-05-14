@@ -18,4 +18,10 @@ public interface UploadRepository extends JpaRepository<ImagePath,Serializable> 
 
     @Query(value = "select * from imagepath  where imagepath.mainID=?1", nativeQuery = true)
     List<ImagePath> getImagePathByMainID(String mainid);
+    //修改头像
+    @Transactional
+    @Modifying
+    @Query(value = "update person_information  set person_information.icon_path=?1 where person_information.userID=?2", nativeQuery = true)
+    void updateUserFace(String iconPath,String userID);
+
 }

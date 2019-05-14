@@ -179,8 +179,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
       function getDataRow(h) {
           var row = document.createElement('tr');
           var img = document.createElement('td');
+          img.style.width='280px'
           var imageName = getImageName(h.mainID)
-          img.innerHTML = "<img src='/roomImage/" + imageName + "'" + "class='img-responsive' width='204' height='136'/>"
+          img.innerHTML = "<img src='/roomImage/" + imageName + "'" + "class='img-thumbnail' width='280px' height='200px'/>"
           row.appendChild(img)
 
           var roomDimType = document.createElement('td');
@@ -404,7 +405,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</div>
 	<!---->
 </div>
-<table class="table table-hover table-condensed" id="message">
+<table  class="table table-condensed table-striped" id="message">
 	<thead>
 	<tr class="vertical-align">
 		<th></th>
@@ -425,6 +426,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 </div>
 </div>
-<div class="container" style="height: 100px">
+<div class="container" style="height: 100px"></div>
 </body>
 </html>

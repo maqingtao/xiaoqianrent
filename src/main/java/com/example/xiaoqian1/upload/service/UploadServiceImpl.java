@@ -3,6 +3,8 @@ package com.example.xiaoqian1.upload.service;
 import com.example.xiaoqian1.common.ConstantFiled;
 import com.example.xiaoqian1.upload.bean.ImagePath;
 import com.example.xiaoqian1.upload.repository.UploadRepository;
+import com.example.xiaoqian1.user.bean.PersonInformation;
+import com.example.xiaoqian1.user.repository.PersonInformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,8 @@ public class UploadServiceImpl implements UploadService {
     **/
     @Autowired
     private UploadRepository uploadRepository;
+    @Autowired
+    PersonInformationRepository personInformationRepository;
     @Override
     public void setImage(MultipartFile uploadFile,String mainID){
         String timers = String.valueOf(System.currentTimeMillis());
@@ -43,5 +47,32 @@ public class UploadServiceImpl implements UploadService {
         imagePath.setMainID(mainID);
         imagePath.setImagePath(uid+fileName);
         uploadRepository.save(imagePath);
+    }
+    /**
+    * @Author: maqingtao
+    * @description: 上传头像
+    * @create: 2019/5/14
+    **/
+
+    @Override
+    public void upLoadUserFace(MultipartFile uploadFile, String userID) {
+        String timers = String.valueOf(System.currentTimeMillis());
+        String uid = timers;
+        //将uid加入文件名防止文件名重复
+        String fileName = uploadFile.getOriginalFilename().toLowerCase();
+        //拼接文件地址
+        String filePath = ConstantFiled.BASIC_PATH + "\\" + uid + fileName;
+        try {
+            uploadFile.transferTo(new File(filePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PersonInformation p=personInformationRepository.findPersonInformation(userID);
+        String path = ConstantFiled.BASIC_PATH + "\\" + p.getIconPath();
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        uploadRepository.updateUserFace(uid+fileName,userID);
     }
 }

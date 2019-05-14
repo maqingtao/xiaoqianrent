@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.example.xiaoqian1.common.ConstantFiled;
 import com.example.xiaoqian1.rent.bean.RoomInformation;
 import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
+import com.example.xiaoqian1.user.bean.PersonInformation;
 import com.example.xiaoqian1.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,5 +80,17 @@ public class UserController {
         ArrayList<String> result = userService.getImageNameList(room.getMainID());
         String json = JSON.toJSONString(result);
         return json;
+    }
+
+    @RequestMapping(value = "/getPersonInformation", method = RequestMethod.POST, consumes = "application/json")
+    public String getPersonInformation(@RequestBody PersonInformation personInformation) {
+        PersonInformation person=userService.getPersonInformation(personInformation);
+        String json = JSON.toJSONString(person);
+        return json;
+    }
+    @RequestMapping(value = "/setPersonInformation", method = RequestMethod.POST, consumes = "application/json")
+    public String setPersonInformation(@RequestBody PersonInformation personInformation) {
+        userService.setPersonInformation(personInformation);
+        return "ok";
     }
 }

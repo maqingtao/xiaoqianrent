@@ -9,7 +9,9 @@ import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
 import com.example.xiaoqian1.upload.bean.ImagePath;
 import com.example.xiaoqian1.upload.repository.UploadRepository;
 import com.example.xiaoqian1.user.bean.MyCollect;
+import com.example.xiaoqian1.user.bean.PersonInformation;
 import com.example.xiaoqian1.user.repository.MyCollectRepository;
+import com.example.xiaoqian1.user.repository.PersonInformationRepository;
 import com.example.xiaoqian1.user.repository.UserRepository;
 import com.example.xiaoqian1.user.service.UserService;
 import com.example.xiaoqian1.util.DicUtil;
@@ -37,6 +39,8 @@ public class UserServiceImpl implements UserService {
     UploadRepository uploadRepository;
     @Autowired
     MyCollectRepository myCollectRepository;
+    @Autowired
+    PersonInformationRepository personInformationRepository;
 
     @Override
     public void saveRoomInformation(RoomDetail roomDetail) {
@@ -151,13 +155,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<RoomInformation> getMyCollects(RoomInformation roomInformation) {
-        List<RoomInformation> result=new ArrayList<>();
-        List<MyCollect> lists=myCollectRepository.findMyCollect(roomInformation.getUserID());
-        for (MyCollect m:lists)
-        {
+        List<RoomInformation> result = new ArrayList<>();
+        List<MyCollect> lists = myCollectRepository.findMyCollect(roomInformation.getUserID());
+        for (MyCollect m : lists) {
             result.add(roomInformationRepository.findRoomByMainID(m.getMainID()));
         }
         return result;
+    }
+
+    /**
+     * @Author: maqingtao
+     * @description: 获取个人信息
+     * @create: 2019/5/14
+     **/
+
+    @Override
+    public PersonInformation getPersonInformation(PersonInformation personInformation) {
+        PersonInformation person = personInformationRepository.findPersonInformation(personInformation.getUserID());
+        return person;
+    }
+
+    /**
+     * @Author: maqingtao
+     * @description: 修改个人信息
+     * @create: 2019/5/14
+     **/
+
+    @Override
+    public void setPersonInformation(PersonInformation p) {
+        personInformationRepository.updatePersonInformation(p.getUserName(), p.getNickName()
+                , p.getPhoneNumber(), p.getEMail(), p.getUserID());
     }
 
     /**

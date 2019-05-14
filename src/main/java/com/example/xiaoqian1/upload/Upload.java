@@ -25,4 +25,10 @@ public class Upload {
       uploadService.setImage(uploadFile,mainID);
       return JSON.toJSONString("OK");
     }
+
+    @RequestMapping(value = "/uploaduserface", method = RequestMethod.POST)
+    public String uploadUserFace(@RequestParam("uploadFile") MultipartFile uploadFile,@RequestParam("userID")String userID) throws IOException {
+        uploadService.upLoadUserFace(uploadFile,userID);
+        return JSON.toJSONString("OK");
+    }
 }
