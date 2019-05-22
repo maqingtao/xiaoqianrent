@@ -224,17 +224,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</script>
 </head>
 <body>
-<!--header-->
-<div class="navigation">
-	<div class="container-fluid">
-		<nav class="pull">
-			<ul>
-				<li><a  href="personal.html">Home</a></li>
-				<li><a  href="about.html">About Us</a></li>
-			</ul>
-		</nav>
-	</div>
-</div>
 
 <div class="header">
 	<div class="container">
@@ -254,26 +243,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</div>
 			</div>
 			<div class="clearfix"> </div>
-			<!---pop-up-box---->
-
 			<link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all"/>
 			<script src="js/jquery.magnific-popup.js" type="text/javascript"></script>
-			<!---//pop-up-box---->
-			<script>
-                $(document).ready(function() {
-                    $('.popup-with-zoom-anim').magnificPopup({
-                        type: 'inline',
-                        fixedContentPos: false,
-                        fixedBgPos: true,
-                        overflowY: 'auto',
-                        closeBtnInside: true,
-                        preloader: false,
-                        midClick: true,
-                        removalDelay: 300,
-                        mainClass: 'my-mfp-zoom-in'
-                    });
-                });
-			</script>
 		</div>
 		<div class="clearfix"> </div>
 	</div>
@@ -287,6 +258,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<ul class="menu">
 				<li class="item1"><a href="#">Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
 					<ul class="cute">
+						<li class="subitem1"><a href="index">首页</a></li>
 						<li class="subitem1"><a href="/rentroom">招租信息</a></li>
 						<div id="personal">
 						</div>
@@ -351,22 +323,32 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<li>
 						<select class="in-drop" id="low_price">
 							<option selected value="0">0</option>
+							<option>500 </option>
 							<option>1000 </option>
 							<option>1500</option>
 							<option>2000</option>
 							<option>2500</option>
 							<option>3000</option>
+							<option>3500 </option>
+							<option>4000 </option>
+							<option>4500 </option>
+							<option>5000 </option>
 						</select>
 					</li>
 					<span>-</span>
 					<li>
 						<select class="in-drop" id="hig_price">
 							<option selected value="-1">无限制 </option>
+							<option>500 </option>
 							<option>1000 </option>
 							<option>1500</option>
 							<option>2000</option>
 							<option>2500</option>
 							<option>3000</option>
+							<option>3500 </option>
+							<option>4000 </option>
+							<option>4500 </option>
+							<option>5000 </option>
 						</select>
 					</li>
 				</ul>
@@ -377,6 +359,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<li>
 						<select class="in-drop" id="min_area">
 							<option  selected value="0">0</option>
+							<option>50 </option>
 							<option>100 </option>
 							<option>150</option>
 							<option>200</option>
@@ -388,6 +371,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<li>
 						<select class="in-drop" id="max_area">
 							<option selected value="-1">无限制</option>
+							<option>50 </option>
 							<option>100 </option>
 							<option>150</option>
 							<option>200</option>

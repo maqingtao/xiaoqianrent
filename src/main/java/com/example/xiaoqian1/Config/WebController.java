@@ -68,4 +68,36 @@ public class WebController {
     public String myInformation() {
         return "/person/my-information";
     }
+
+    //推荐城市搜索
+    @RequestMapping("/cityrent")
+    public String cityrent() {
+        return "/cityrent";
+    }
+
+    //管理员
+    @RequestMapping("/admin")
+    public String admin() {
+        return "/admin/index";
+    }
+    //全部房源
+    @RequestMapping("/adminAllroom")
+    public String adminAllroom() {
+        return "/admin/allroom";
+    }
+    //待审核
+    @RequestMapping("/adminReview")
+    public String adminReview() {
+        return "/admin/review";
+    }
+    //用户信息
+    @RequestMapping("/adminUserInformation")
+    public String adminUserInformation() {
+        return "/admin/userInformation";
+    }
+    //用户信息
+    @RequestMapping("/adminLogin")
+    public String adminLogin() {
+        return "/admin/sign-in";
+    }
 }

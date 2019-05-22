@@ -8,5 +8,5 @@ import java.util.Map;
 public interface RoomDetailService {
     public List<RoomDetail> getDetail(RoomDetail room);
     public Map<String,String> getFacility(RoomDetail room);
-
+    public List<RoomDetail> getLocalHotRoom(RoomDetail room);
 }

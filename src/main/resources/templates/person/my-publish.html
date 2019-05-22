@@ -121,6 +121,18 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             roomStructure.innerHTML = h.roomStructure;
             row.appendChild(roomStructure);
 
+            var roomStructure = document.createElement('td');
+            var status
+            if (h.reviewstatus=='正在审核')
+            {
+                status="<span style='color: red'>"+ h.reviewstatus+"</span>";
+            }
+            else{
+                status="<span style='color: green'>"+ h.reviewstatus+"</span>";
+            }
+            roomStructure.innerHTML =status;
+            row.appendChild(roomStructure);
+
             var detail = document.createElement('td');
             var mainID = h.mainID;
             detail.innerHTML = "<a href='javascript:confirm(" + mainID + ");'>" + "删除" + "</a>"
@@ -199,6 +211,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <ul class="menu">
                 <li class="item1"><a href="#"> Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
                     <ul class="cute">
+                        <li class="subitem1"><a href="index">首页</a></li>
                         <li class="subitem2"><a href="/rentroom">租赁信息 </a></li>
                         <div id="personal"></div>
                     </ul>
@@ -289,6 +302,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         <th>居住面积</th>
                         <th>价格</th>
                         <th>房屋结构</th>
+                        <th>状态</th>
                         <th>操作</th>
                     </tr>
                     </thead>

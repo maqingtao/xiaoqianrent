@@ -18,4 +18,9 @@ public interface PersonInformationRepository extends JpaRepository<PersonInforma
     @Modifying
     @Query(value = "update person_information  set person_information.user_name=?1,person_information.nick_name=?2,person_information.phone_number=?3,person_information.e_mail=?4 where person_information.userID=?5", nativeQuery = true)
     void updatePersonInformation(String userName,String nickName,String phoneNumber,String email,String userID);
+    //修改user表
+    @Transactional
+    @Modifying
+    @Query(value = "update User  set User.username=?1 where User.userID=?2", nativeQuery = true)
+    void updateUser(String userName,String userID);
 }

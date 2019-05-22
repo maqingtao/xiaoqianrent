@@ -37,4 +37,17 @@ public class RoomDetailController {
         String json = JSON.toJSONString(map);
         return json;
     }
+    /**
+    * @Author: maqingtao
+    * @description: 获取本地房源
+    * @create: 2019/5/15
+    **/
+
+    @RequestMapping(value = "/getLocalHot", method = RequestMethod.POST, consumes = "application/json")
+    public String getLocalHot(@RequestBody RoomDetail roomDetail) {
+        List<RoomDetail> list = detailService.getLocalHotRoom(roomDetail);
+        String json = JSON.toJSONString(list);
+        return json;
+    }
+
 }

@@ -1,11 +1,13 @@
 package com.example.xiaoqian1.user.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.example.xiaoqian1.admin.bean.ReviewRoomInformation;
 import com.example.xiaoqian1.common.ConstantFiled;
 import com.example.xiaoqian1.rent.bean.RoomInformation;
 import com.example.xiaoqian1.roomdetail.bean.RoomDetail;
 import com.example.xiaoqian1.user.bean.PersonInformation;
 import com.example.xiaoqian1.user.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +38,10 @@ public class UserController {
     /*发布房源*/
     @RequestMapping(value = "/roompublish", method = RequestMethod.POST, consumes = "application/json")
     public String createRoomPublish(@RequestBody RoomDetail roomDetail) {
-        userService.saveRoomInformation(roomDetail);
+        ReviewRoomInformation reviewRoomInformation=new ReviewRoomInformation();
+        BeanUtils.copyProperties(roomDetail,reviewRoomInformation);
+        userService.saveReviewRoomInformation(reviewRoomInformation);
+//        userService.saveRoomInformation(roomDetail);
         return JSON.toJSONString(ConstantFiled.SUCESS_STATUS);
     }
 
@@ -47,8 +52,8 @@ public class UserController {
      **/
 
     @RequestMapping(value = "/mypublish", method = RequestMethod.POST, consumes = "application/json")
-    public String getMyPublish(@RequestBody RoomInformation room) {
-        List<RoomInformation> result = userService.getMyPublish(room);
+    public String getMyPublish(@RequestBody ReviewRoomInformation room) {
+        List<ReviewRoomInformation> result = userService.getMyPublish(room);
         return JSON.toJSONString(result);
     }
 

@@ -1,5 +1,7 @@
 package com.example.xiaoqian1.user.service.impl;
 
+import com.example.xiaoqian1.admin.ReviewRepository;
+import com.example.xiaoqian1.admin.bean.ReviewRoomInformation;
 import com.example.xiaoqian1.common.ConstantFiled;
 import com.example.xiaoqian1.common.Dictionary.repository.CityDictionaryRepository;
 import com.example.xiaoqian1.login.repository.UserLoginRepository;
@@ -19,7 +21,6 @@ import com.example.xiaoqian1.util.PropertyUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,8 @@ public class UserServiceImpl implements UserService {
     MyCollectRepository myCollectRepository;
     @Autowired
     PersonInformationRepository personInformationRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
 
     @Override
     public void saveRoomInformation(RoomDetail roomDetail) {
@@ -63,8 +66,9 @@ public class UserServiceImpl implements UserService {
      * @create: 2019/4/5
      **/
     @Override
-    public List<RoomInformation> getMyPublish(RoomInformation roomInformation) {
-        List<RoomInformation> list = roomInformationRepository.findMyPublishByUserID(
+    public List<ReviewRoomInformation> getMyPublish(ReviewRoomInformation roomInformation) {
+        //查找发布房源需要从审核表中查询
+        List<ReviewRoomInformation> list = reviewRepository.findMyPublishByUserID(
                 roomInformation.getUserID());
         return list;
     }
@@ -76,8 +80,9 @@ public class UserServiceImpl implements UserService {
             roomInformationRepository.delRoomDetailByMainID(roomInformation.getMainID());
             delImage(roomInformation.getMainID());
             uploadRepository.delImagePathByMainID(roomInformation.getMainID());
+//            /*删除审核表内容*/
+//            reviewRepository.delReviewRoomByMainID(roomInformation.getMainID());
         }
-
     }
 
     /*删除房源依赖的图片*/
@@ -185,6 +190,28 @@ public class UserServiceImpl implements UserService {
     public void setPersonInformation(PersonInformation p) {
         personInformationRepository.updatePersonInformation(p.getUserName(), p.getNickName()
                 , p.getPhoneNumber(), p.getEMail(), p.getUserID());
+        personInformationRepository.updateUser(p.getUserName(), p.getUserID());
+    }
+
+    /**
+     * @Author: maqingtao
+     * @description: 将发布信息放入审核表
+     * @create: 2019/5/21
+     **/
+
+    @Override
+    public void saveReviewRoomInformation(ReviewRoomInformation reviewRoomInformation) {
+        Map<String, String> city = DicUtil.getCityMap(cityDictionaryRepository.findAll());
+        String SpaceDimType = city.get(reviewRoomInformation.getSpaceDimID());
+        reviewRoomInformation.setSpaceDimType(SpaceDimType);
+        String roomDimType = PropertyUtil.getRoomDimType(reviewRoomInformation.getRoomDimID());
+        reviewRoomInformation.setRoomDimType(roomDimType);
+        //获取用户ID(不是用户名)
+        String userID = userLoginRepository.findUserID(reviewRoomInformation.getUsername()).getUserID();
+        reviewRoomInformation.setUserID(userID);
+        //添加审核状态，发布即开始
+        reviewRoomInformation.setReviewstatus("正在审核");
+        reviewRepository.save(reviewRoomInformation);
     }
 
     /**
