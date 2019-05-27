@@ -9,8 +9,8 @@
     <!--menu-->
     <script src="js/scripts.js"></script>
     <link href="css/styles.css" rel="stylesheet">
-    <!--//menu-->
-    <!--theme-style-->
+    <script src="../static/js/echarts.min.js"></script>
+    <script src="../static/js/china.js"></script>
     <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
     <!--//theme-style-->
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"/>
@@ -42,6 +42,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 p.appendChild(logOut)
             }
             getRecommend()
+            f()
         }
         var image
 
@@ -74,13 +75,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         "</a>" +
                         "<div class='fur'>" +
                         "<div class='fur1'>" +
-                        "<span class='fur-money'>"+jsonobj[i].roomPrice+"元/月"+" </span>" +
+                        "<span class='fur-money'>" + jsonobj[i].roomPrice + "元/月" + " </span>" +
                         "<h6 class='fur-name'>" +
-                        "<span>"+jsonobj[i].address+"</span>" +
-                        "<a href='detail?" + jsonobj[i].mainID + "'>"+"详情"+"</a></h6>" +
+                        "<span>" + jsonobj[i].address + "</span>" +
+                        "<a href='detail?" + jsonobj[i].mainID + "'>" + "详情" + "</a></h6>" +
                         "</div>" +
                         "<div class='fur2'>" +
-                        "<span>"+jsonobj[i].spaceDimType+"</span>" +
+                        "<span>" + jsonobj[i].spaceDimType + "</span>" +
                         "</div>" +
                         "</div>" +
                         "</div>" +
@@ -111,6 +112,120 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 });
             }
             $.postJSON('/api/getLocalHot', {"spaceDimID": "230001"}, callback);
+        }
+
+        function randomData() {
+            return Math.round(Math.random() * 500);
+        }
+
+        function f() {
+            var colordata = [
+                {name: '北京', value: randomData()}, {name: '天津', value: randomData()},
+                {name: '上海', value: randomData()}, {name: '重庆', value: randomData()},
+                {name: '河北', value: randomData()}, {name: '河南', value: randomData()},
+                {name: '云南', value: randomData()}, {name: '辽宁', value: randomData()},
+                {name: '黑龙江', value: randomData()}, {name: '湖南', value: randomData()},
+                {name: '安徽', value: randomData()}, {name: '山东', value: randomData()},
+                {name: '新疆', value: randomData()}, {name: '江苏', value: randomData()},
+                {name: '浙江', value: randomData()}, {name: '江西', value: randomData()},
+                {name: '湖北', value: randomData()}, {name: '广西', value: randomData()},
+                {name: '甘肃', value: randomData()}, {name: '山西', value: randomData()},
+                {name: '内蒙古', value: randomData()}, {name: '陕西', value: randomData()},
+                {name: '吉林', value: randomData()}, {name: '福建', value: randomData()},
+                {name: '贵州', value: randomData()}, {name: '广东', value: randomData()},
+                {name: '青海', value: randomData()}, {name: '西藏', value: randomData()},
+                {name: '四川', value: randomData()}, {name: '宁夏', value: randomData()},
+                {name: '海南', value: randomData()}, {name: '台湾', value: randomData()},
+                {name: '香港', value: randomData()}, {name: '澳门', value: randomData()}
+            ];
+            var mydata = {
+                '北京':'110000','天津':'120000',
+                '上海':'310000','重庆':'500000',
+                '河北':'130000','河南':'410000',
+                '云南':'530000','辽宁':'210000',
+                '黑龙江':'230000','湖南':'430000',
+                '安徽':'340000','山东':'370000',
+                '新疆':'650000','江苏':'320000',
+                '浙江':'330000','江西':'360000',
+                '湖北':'420000','广西':'450000',
+                '甘肃':'620000','山西':'140000',
+                '内蒙古':'150000','陕西':'610000',
+                '吉林':'220000','福建':'350000',
+                '贵州':'520000','广东':'440000',
+                '青海':'630000','西藏':'540000',
+                '四川':'510000','宁夏':'640000',
+                '海南':'460000','台湾':'710000',
+                '香港':'810000','澳门':'820000'
+            }
+            // var mydata = [
+            //     {name: '北京', value: '100000'}, {name: '天津', value: '120000'},
+            //     {name: '上海', value: '310000'}, {name: '重庆', value: '500000'},
+            //     {name: '河北', value: '130000'}, {name: '河南', value: '410000'},
+            //     {name: '云南', value: '530000'}, {name: '辽宁', value: '210000'},
+            //     {name: '黑龙江', value: '230000'}, {name: '湖南', value: '430000'},
+            //     {name: '安徽', value: '340000'}, {name: '山东', value: '370000'},
+            //     {name: '新疆', value: '650000'}, {name: '江苏', value: '320000'},
+            //     {name: '浙江', value: '330000'}, {name: '江西', value: '360000'},
+            //     {name: '湖北', value: '420000'}, {name: '广西', value: '450000'},
+            //     {name: '甘肃', value: '620000'}, {name: '山西', value: '140000'},
+            //     {name: '内蒙古', value: '150000'}, {name: '陕西', value: '610000'},
+            //     {name: '吉林', value: '220000'}, {name: '福建', value: '350000'},
+            //     {name: '贵州', value: '520000'}, {name: '广东', value: '440000'},
+            //     {name: '青海', value: '630000'}, {name: '西藏', value: '540000'},
+            //     {name: '四川', value: '510000'}, {name: '宁夏', value: '640000'},
+            //     {name: '海南', value: '460000'}, {name: '台湾', value: '710000'},
+            //     {name: '香港', value: '810000'}, {name: '澳门', value: '820000'}
+            // ];
+            var optionMap = {
+                backgroundColor: '#FFFFFF',
+                title: {
+                    text: '地图查询房源',
+                    subtext: '',
+                    x: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}'
+                },
+
+                //左侧小导航图标
+                visualMap: {
+                    show: false,
+                    x: 'left',
+                    y: 'center',
+                    splitList: [
+                        {start: 500, end: 600}, {start: 400, end: 500},
+                        {start: 300, end: 400}, {start: 200, end: 300},
+                        {start: 100, end: 200}, {start: 0, end: 100},
+                    ],
+                    color: ['#5475f5', '#9feaa5', '#85daef', '#74e2ca', '#e6ac53', '#9fb5ea']
+                },
+                series: [{
+                    name: '城市',
+                    type: 'map',
+                    mapType: 'china',
+                    roam: false,
+                    zoom: 1.25,
+                    label: {
+                        normal: {
+                            show: true //省份名称
+                        },
+                        emphasis: {
+                            show: false
+                        }
+                    },
+                    data: colordata //数据
+                }]
+            };
+            //初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+            //使用制定的配置项和数据显示图表
+            myChart.setOption(optionMap);
+
+            myChart.on('click', function (params) {
+                var provinceID=mydata[params.data.name]
+                location.href="/maproom?provinceID="+provinceID;
+            });
         }
 
         $.postJSON = function (url, data, callback) {
@@ -302,7 +417,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
     </div>
 </div>
-<!---->
+<div id="main" style="height:600px"></div>
 <!--premium-project-->
 <div class="premium">
 </div>

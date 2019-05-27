@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>主页</title>
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all"/>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content="Real Home Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="js/responsiveslides.min.js"></script>
+    <script src="../static/js1/login.js"></script>
+    <!--//用户名添加-->
+    <script type="text/javascript">
+        window.onload = function () {
+            var username = $.cookie('username');
+            if (typeof(username) != "undefined") {
+                document.getElementById("username_msg").innerText = username
+            }
+            var username = document.getElementById("username_msg").innerText;
+            if (username != "欢迎 请登陆") {
+                var p = document.getElementById("personal")
+                var userCenter = document.createElement("li");
+                var logOut = document.createElement("li");
+                userCenter.innerHTML = "<li class='subitem1'><a href='personal'>个人中心</a></li>";
+                p.appendChild(userCenter)
+                logOut.innerHTML = "<li class='subitem1'><a href='javascript:logout()'>登出 </a></li>"
+                p.appendChild(logOut)
+            }
+            document.getElementById("cityname").innerText=getProvinceName(getQueryString('provinceID'))
+            getCity(getQueryString('provinceID'))
+            getPageSize()
+            getPageInformation(0)
+        }
+        function getProvinceName(provinceID) {
+            var provincedata = {
+                '北京':'110000','天津':'120000',
+                '上海':'310000','重庆':'500000',
+                '河北':'130000','河南':'410000',
+                '云南':'530000','辽宁':'210000',
+                '黑龙江':'230000','湖南':'430000',
+                '安徽':'340000','山东':'370000',
+                '新疆':'650000','江苏':'320000',
+                '浙江':'330000','江西':'360000',
+                '湖北':'420000','广西':'450000',
+                '甘肃':'620000','山西':'140000',
+                '内蒙古':'150000','陕西':'610000',
+                '吉林':'220000','福建':'350000',
+                '贵州':'520000','广东':'440000',
+                '青海':'630000','西藏':'540000',
+                '四川':'510000','宁夏':'640000',
+                '海南':'460000','台湾':'710000',
+                '香港':'810000','澳门':'820000'
+            };
+            for (var key in provincedata)
+            {
+                if (provincedata[key]==provinceID)
+                {
+                    return key
+                }
+            }
+        }
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+        function getCity(provinceID) {
+            $("#r_city").find("option").remove();
+            var province_sel = document.getElementById("r_province");
+            var callback = function (data) {
+                var r_city = document.getElementById("r_city");
+                var result = JSON.stringify(data)
+                var allCity = JSON.parse(result);
+                for (var i = 0; i < allCity.length; i++) { //遍历一下json数据
+                    r_city.add(new Option(allCity[i].cityName, allCity[i].cityId));
+                }
+            }
+            $.postJSON('/api/getAllCity', {"preID": provinceID}, callback);
+        }
+
+        function page(pageNumber) {
+            clear()
+            getPageInformation(pageNumber)
+            getPageSize()
+        }
+
+        function clear() {
+            var tabRows = document.getElementById("room").rows.length;
+            for (var i = 0; i < tabRows; i++) {
+                document.getElementById("room").deleteRow(0);
+            }
+            var page = document.getElementById("page_num");
+            page.innerHTML = "";
+        }
+
+        function getPageSize() {
+            var page_num = document.getElementById("page_num");
+            var callback = function (data) {
+                var first = document.createElement('li'); // 生成一个 li元素
+                var last = document.createElement('li'); // 生成一个 li元素
+                var result = JSON.stringify(data)
+                var pageSize = JSON.parse(result);
+                if (pageSize != 0) {
+                    first.innerHTML = "<a href='javascript:page(" + 0 + ");'>" + "首页" + "</a>"
+                    document.getElementById('page_num').appendChild(first);
+                    for (var i = 0; i < pageSize; i++) {
+                        var elem_li = document.createElement('li'); // 生成一个 li元素
+                        var num = i + 1
+                        elem_li.innerHTML = "<a href='javascript:page(" + i + ");'>" + num + "</a>"
+                        // 分页组件内容
+                        document.getElementById('page_num').appendChild(elem_li);
+
+                    }
+                    var lastPage = pageSize - 1;
+                    last.innerHTML = "<a href='javascript:page(" + lastPage + ");'>" + "尾页" + "</a>"
+                    document.getElementById('page_num').appendChild(last);
+                }
+            }
+
+            var provinceID =getQueryString('provinceID');
+            var city_sel = document.getElementById("r_city");
+            var type_sel = document.getElementById("r_type");
+            var low_price_sel = document.getElementById("low_price");
+            var hig_price_sel = document.getElementById("hig_price");
+            var min_area_sel = document.getElementById("min_area");
+            var max_area_sel = document.getElementById("max_area");
+            var spaceDimID = city_sel.options[city_sel.selectedIndex].value
+            var roomDimID = type_sel.options[type_sel.selectedIndex].value
+            var l_price = low_price_sel.options[low_price_sel.selectedIndex].value
+            var h_price = hig_price_sel.options[hig_price_sel.selectedIndex].value
+            var min_area = min_area_sel.options[min_area_sel.selectedIndex].value
+            var max_area = max_area_sel.options[max_area_sel.selectedIndex].value
+            $.postJSON('/api/getPageSize', {
+                "roomDimID": roomDimID, "spaceDimID": spaceDimID,
+                "minPrice": l_price, "maxPrice": h_price,
+                "minArea": min_area, "maxArea": max_area, "provinceID": provinceID
+            }, callback);
+        }
+
+        var image
+
+        function getImageName(mainID) {
+            var callback = function (data) {
+                var result = JSON.stringify(data)
+                var jsonobj = JSON.parse(result);
+                if (jsonobj == 0) {
+                    image = "default.jpg"
+                } else {
+                    image = jsonobj;
+                }
+
+            }
+            $.postJSON('/api/getImageName', {"mainID": mainID}, callback);
+            return image
+        }
+
+        function getPageInformation(pageNumber) {
+            var callback = function (data) {
+                var result = JSON.stringify(data)
+                var jsonobj = JSON.parse(result);
+                var table = document.getElementById("message");
+                var tbody = document.getElementById("room");
+                if (jsonobj != "404") {
+                    for (var i = 0; i < jsonobj.length; i++) { //遍历一下json数据
+                        var trow = getDataRow(jsonobj[i]); //定义一个方法,返回tr数据
+                        tbody.appendChild(trow);
+                    }
+                    table.appendChild(tbody)
+                }
+                else {
+                    // var warns=document.createElement("span")
+                    // warns.innerText="无数据"
+                    // tbody.appendChild(warns);
+                    // table.appendChild(tbody)
+                }
+
+            }
+
+            var provinceID = getQueryString('provinceID');
+            var city_sel = document.getElementById("r_city");
+            var type_sel = document.getElementById("r_type");
+            var low_price_sel = document.getElementById("low_price");
+            var hig_price_sel = document.getElementById("hig_price");
+            var min_area_sel = document.getElementById("min_area");
+            var max_area_sel = document.getElementById("max_area");
+            var spaceDimID = city_sel.options[city_sel.selectedIndex].value
+            var roomDimID = type_sel.options[type_sel.selectedIndex].value
+            var l_price = low_price_sel.options[low_price_sel.selectedIndex].value
+            var h_price = hig_price_sel.options[hig_price_sel.selectedIndex].value
+            var min_area = min_area_sel.options[min_area_sel.selectedIndex].value
+            var max_area = max_area_sel.options[max_area_sel.selectedIndex].value
+            $.postJSON('/api/getSelectMessage/' + pageNumber,
+                {
+                    "roomDimID": roomDimID, "spaceDimID": spaceDimID,
+                    "minPrice": l_price, "maxPrice": h_price,
+                    "minArea": min_area, "maxArea": max_area, "provinceID": provinceID
+                }, callback);
+        }
+
+        function getDataRow(h) {
+            var row = document.createElement('tr');
+            var img = document.createElement('td');
+            img.style.width = '280px'
+            var imageName = getImageName(h.mainID)
+            img.innerHTML = "<img src='/roomImage/" + imageName + "'" + "class='img-thumbnail' width='280px' height='200px'/>"
+            row.appendChild(img)
+
+            var roomDimType = document.createElement('td');
+            roomDimType.innerHTML = h.roomDimType;
+            row.appendChild(roomDimType);
+
+            var spaceDimType = document.createElement('td');
+            spaceDimType.innerHTML = h.spaceDimType;
+            row.appendChild(spaceDimType);
+
+            var roomArea = document.createElement('td');
+            roomArea.innerHTML = h.roomArea;
+            row.appendChild(roomArea);
+
+            var roomPrice = document.createElement('td');
+            roomPrice.innerHTML = h.roomPrice + "/月";
+            row.appendChild(roomPrice);
+
+            var roomStructure = document.createElement('td');
+            roomStructure.innerHTML = h.roomStructure;
+            row.appendChild(roomStructure);
+
+            var detail = document.createElement('td');
+            var str = "detail?mainID=" + h.mainID
+            detail.innerHTML = "<a href='" + str + "'>查看详细信息</a>";
+            row.appendChild(detail);
+            return row
+        }
+
+        $.postJSON = function (url, data, callback) {
+            return jQuery.ajax({
+                'async': false,
+                'type': 'POST',
+                'url': url,
+                'contentType': 'application/json',
+                'data': JSON.stringify(data),
+                'dataType': 'json',
+                'success': callback
+            });
+        };
+    </script>
+</head>
+<body>
+
+<div class="header">
+    <div class="container">
+        <!--logo-->
+        <div class="logo">
+            <h1><a href="/rentroom">小迁 租房</a></h1>
+        </div>
+        <!--//logo-->
+        <div class="top-nav">
+            <ul class="right-icons">
+                <li><span><i class="glyphicon glyphicon-phone"> <font id="username_msg">欢迎 请登陆</font></i></span></li>
+                <li><a href="/"><i class="glyphicon glyphicon-user"> </i>Login</a></li>
+            </ul>
+            <div class="nav-icon">
+                <div class="hero fa-navicon fa-2x nav_slide_button" id="hero">
+                    <a href="#"><i class="glyphicon glyphicon-menu-hamburger"></i> </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all"/>
+            <script src="js/jquery.magnific-popup.js" type="text/javascript"></script>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<!--//-->
+<div class=" banner-buying">
+    <div class=" container">
+        <h3><span id="cityname"></span></h3>
+        <!---->
+        <div class="menu-right">
+            <ul class="menu">
+                <li class="item1"><a href="#">Menu<i class="glyphicon glyphicon-menu-down"> </i> </a>
+                    <ul class="cute">
+                        <li class="subitem1"><a href="index">首页</a></li>
+                        <li class="subitem1"><a href="/rentroom">招租信息</a></li>
+                        <div id="personal">
+                        </div>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+        <!--initiate accordion-->
+        <script type="text/javascript">
+            $(function () {
+                var menu_ul = $('.menu > li > ul'),
+                    menu_a = $('.menu > li > a');
+                menu_ul.hide();
+                menu_a.click(function (e) {
+                    e.preventDefault();
+                    if (!$(this).hasClass('active')) {
+                        menu_a.removeClass('active');
+                        menu_ul.filter(':visible').slideUp('normal');
+                        $(this).addClass('active').next().stop(true, true).slideDown('normal');
+                    } else {
+                        $(this).removeClass('active');
+                        $(this).next().stop(true, true).slideUp('normal');
+                    }
+                });
+
+            });
+        </script>
+
+    </div>
+</div>
+
+<!--//租房信息部分-->
+<div class="container">
+    <!--price-->
+    <div class="price">
+        <div class="price-grid">
+            <div class="col-sm-4 price-top">
+                <h4>城市</h4>
+                <select class="in-drop" id="r_city">
+                </select>
+            </div>
+            <div class="col-sm-4 price-top">
+                <h4>类型</h4>
+                <select class="in-drop" id="r_type">
+                    <option selected value="-1">无限制</option>
+                    <option value="10">合租</option>
+                    <option value="11">整租</option>
+                </select>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="price-grid">
+            <div class="col-sm-6 price-top1">
+                <h4>价格区间</h4>
+                <ul>
+                    <li>
+                        <select class="in-drop" id="low_price">
+                            <option selected value="0">0</option>
+                            <option>500</option>
+                            <option>1000</option>
+                            <option>1500</option>
+                            <option>2000</option>
+                            <option>2500</option>
+                            <option>3000</option>
+                            <option>3500</option>
+                            <option>4000</option>
+                            <option>4500</option>
+                            <option>5000</option>
+                        </select>
+                    </li>
+                    <span>-</span>
+                    <li>
+                        <select class="in-drop" id="hig_price">
+                            <option selected value="-1">无限制</option>
+                            <option>500</option>
+                            <option>1000</option>
+                            <option>1500</option>
+                            <option>2000</option>
+                            <option>2500</option>
+                            <option>3000</option>
+                            <option>3500</option>
+                            <option>4000</option>
+                            <option>4500</option>
+                            <option>5000</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-6 price-top1">
+                <h4>面积区间</h4>
+                <ul>
+                    <li>
+                        <select class="in-drop" id="min_area">
+                            <option selected value="0">0</option>
+                            <option>50</option>
+                            <option>100</option>
+                            <option>150</option>
+                            <option>200</option>
+                            <option>250</option>
+                            <option>300</option>
+                        </select>
+                    </li>
+                    <span>-</span>
+                    <li>
+                        <select class="in-drop" id="max_area">
+                            <option selected value="-1">无限制</option>
+                            <option>50</option>
+                            <option>100</option>
+                            <option>150</option>
+                            <option>200</option>
+                            <option>250</option>
+                            <option>300</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div>
+            <button id="sub" type="button" onclick="page(0)" class="btn btn-primary btn-lg btn-block">迁一下</button>
+        </div>
+    </div>
+    <!---->
+</div>
+<table class="table table-condensed table-striped" id="message">
+    <thead>
+    <tr class="vertical-align">
+        <th></th>
+        <th>房间类型</th>
+        <th>地理位置</th>
+        <th>居住面积</th>
+        <th>价格</th>
+        <th>房屋结构</th>
+        <th>详情</th>
+    </tr>
+    </thead>
+    <tbody id="room">
+    </tbody>
+</table>
+<div align="center">
+    <ul class="pagination" id="page_num">
+    </ul>
+
+</div>
+</div>
+<div class="container" style="height: 100px"></div>
+</body>
+</html>

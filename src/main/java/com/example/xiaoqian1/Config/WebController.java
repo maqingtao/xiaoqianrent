@@ -100,4 +100,9 @@ public class WebController {
     public String adminLogin() {
         return "/admin/sign-in";
     }
+
+    @RequestMapping("/maproom")
+    public String maproom() {
+        return "/maproom";
+    }
 }
