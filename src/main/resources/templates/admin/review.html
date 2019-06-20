@@ -57,6 +57,7 @@
     window.onload = function () {
         var username=$.cookie('adminusername');
         document.getElementById("username").innerText=username
+        $('#mymodal').modal('hide')
         getInformation()
     }
     function getInformation() {
@@ -81,12 +82,12 @@
         }
         $.postJSON('/admin/confirmreview', {"mainID":mainID}, callback);
     }
+    function getDetail()
+    {
+        $('#mymodal').modal('show')
+    }
     function getDataRow(h) {
         var row = document.createElement('tr');
-        // var img = document.createElement('td');
-        // var imageName = getImageName(h.mainID)
-        // img.innerHTML = "<img src='/roomImage/" + imageName + "'" + "class='img-responsive' width='204' height='136'/>"
-        // row.appendChild(img)
         var roomDimType = document.createElement('td');
         roomDimType.innerHTML = h.roomDimType;
         row.appendChild(roomDimType);
@@ -125,7 +126,6 @@
         row.appendChild(detail);
         return row
     }
-
     $.postJSON = function (url, data, callback) {
         return jQuery.ajax({
             'async': false,
@@ -213,7 +213,6 @@
     </div>
 </div>
 
-
 <script src="lib/bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript">
     $("[rel=tooltip]").tooltip();
@@ -223,7 +222,6 @@
         });
     });
 </script>
-
 </body>
 </html>
 

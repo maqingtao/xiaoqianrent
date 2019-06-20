@@ -24,11 +24,6 @@ public class RoomController {
     @Autowired
     RoomInformationService roomInformationService;
 
-    //    @RequestMapping(value = "/getRoomInformation", method = RequestMethod.POST, consumes = "application/json")
-//    public String getRoomInformation(@RequestBody RoomInformation information) {
-//        String json= JSON.toJSONString(roomInformationService.getInformation());
-//        return json;
-//    }
     @RequestMapping(value = "/getPageMessage/{page}", method = RequestMethod.POST, consumes = "application/json")
     public String getPageMessage(@PathVariable("page") int page, @RequestBody RoomInformation information) {
         //设定

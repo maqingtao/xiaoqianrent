@@ -13,16 +13,8 @@ import com.example.xiaoqian1.user.bean.MyCollect;
 import com.example.xiaoqian1.user.repository.MyCollectRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
-
 import org.springframework.stereotype.Service;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.rmi.CORBA.Util;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -39,61 +31,76 @@ public class RoomRecommendImpl implements RoomRecommendService {
     RoomDetailRepository roomDetailRepository;
     @Autowired
     UploadRepository uploadRepository;
+
     @Override
     public List<RoomDetail> getRecommend(User user) {
         List<MyCollect> allCollect = myCollectRepository.findMyCollect(user.getUserID());
         List<String> mainidList = new LinkedList<>();
+        Map<String,String> collectMainID=new HashMap<>();
         Map<String, Integer> divPrice = new LinkedHashMap<>();
         Map<String, Integer> divArea = new LinkedHashMap<>();
         Map<String, Integer> divType = new LinkedHashMap<>();
         List<RoomInformation> roomInformations = new LinkedList<>();
+        //获取本地id
+        String localSpaceDimID = roomInformationRepository.findRoomByMainID(user.getMainID()).getSpaceDimID();
         //获取我的所有收藏的mainID
         if (allCollect != null && allCollect.size() > 0) {
             for (MyCollect mainID : allCollect) {
+                collectMainID.put(mainID.getMainID(),mainID.getMainID());
                 mainidList.add(mainID.getMainID());
             }
         }
         //查询房屋收藏信息
         for (String mainID : mainidList) {
-            roomInformations.add(roomInformationRepository.findRoomByMainID(mainID));
-        }
-        divPrice = getPriceCount(roomInformations);
-        divArea = getAreaCount(roomInformations);
-        divType = getTypeCount(roomInformations);
-        //求各特征的偏好向量/
-        Map<String, Float> pricePreferenceVector = new LinkedHashMap<>();
-        Map<String, Float> areaPreferenceVector = new LinkedHashMap<>();
-        Map<String, Float> typePreferenceVector = new LinkedHashMap<>();
-        //得到收藏列表的总数目
-        Integer lenth = allCollect.size();
-        pricePreferenceVector = setPreferenceVector(divPrice, lenth);
-        areaPreferenceVector = setPreferenceVector(divArea, lenth);
-        typePreferenceVector = setPreferenceVector(divType, lenth);
-        //这里做推荐的时候要过滤一下本地城市
-        List<RoomInformation> allRooms = roomInformationRepository.findAll();
-        for (int i = 0; i < allRooms.size(); i++) {
-            if (!allRooms.get(i).getSpaceDimID().equals("230001")) {
-                allRooms.remove(i);
+            //推荐的是本地城市的房源
+            RoomInformation r = roomInformationRepository.findRoomByMainID(mainID);
+            if (r.getSpaceDimID().equals(localSpaceDimID)) {
+                roomInformations.add(r);
             }
         }
-        List<UserCollect> result = new LinkedList<>();
-        //求每个房源与偏好向量的得分
-        for (RoomInformation roomInformation : allRooms) {
-            UserCollect userCollect = new UserCollect();
-            List<RoomInformation> information = new LinkedList<>();
-            information.add(roomInformation);
-            Map<String, Integer> vector_price = getPriceCount(information);
-            Map<String, Integer> vector_area = getAreaCount(information);
-            Map<String, Integer> vector_type = getTypeCount(information);
-            userCollect.setMainID(roomInformation.getMainID());
-            userCollect.setPrice_cos(String.valueOf(cosine_similarity(pricePreferenceVector, vector_price)));
-            userCollect.setArea_cos(String.valueOf(cosine_similarity(areaPreferenceVector, vector_area)));
-            userCollect.setType_cos(String.valueOf(cosine_similarity(typePreferenceVector, vector_type)));
-            result.add(userCollect);
+        if (roomInformations.size() > 0) {
+            divPrice = getPriceCount(roomInformations);
+            divArea = getAreaCount(roomInformations);
+            divType = getTypeCount(roomInformations);
+            //求各特征的偏好向量/
+            Map<String, Float> pricePreferenceVector = new LinkedHashMap<>();
+            Map<String, Float> areaPreferenceVector = new LinkedHashMap<>();
+            Map<String, Float> typePreferenceVector = new LinkedHashMap<>();
+            //得到收藏列表的总数目
+            Integer lenth = allCollect.size();
+            pricePreferenceVector = setPreferenceVector(divPrice, lenth);
+            areaPreferenceVector = setPreferenceVector(divArea, lenth);
+            typePreferenceVector = setPreferenceVector(divType, lenth);
+            //这里做推荐的时候要过滤一下本地城市
+            List<RoomInformation> allRoom = roomInformationRepository.findAll();
+            List<RoomInformation> allRooms = new LinkedList<>();
+            for (int i = 0; i < allRoom.size(); i++) {
+                //保证推荐房源不包括收藏房源
+                if (allRoom.get(i).getSpaceDimID().equals(localSpaceDimID)&&
+                        !collectMainID.containsKey(allRoom.get(i).getMainID())) {
+                    allRooms.add(allRoom.get(i));
+                }
+            }
+            List<UserCollect> result = new LinkedList<>();
+            //求每个房源与偏好向量的得分
+            for (RoomInformation roomInformation : allRooms) {
+                UserCollect userCollect = new UserCollect();
+                List<RoomInformation> information = new LinkedList<>();
+                information.add(roomInformation);
+                Map<String, Integer> vector_price = getPriceCount(information);
+                Map<String, Integer> vector_area = getAreaCount(information);
+                Map<String, Integer> vector_type = getTypeCount(information);
+                userCollect.setMainID(roomInformation.getMainID());
+                userCollect.setPrice_cos(String.valueOf(cosine_similarity(pricePreferenceVector, vector_price)));
+                userCollect.setArea_cos(String.valueOf(cosine_similarity(areaPreferenceVector, vector_area)));
+                userCollect.setType_cos(String.valueOf(cosine_similarity(typePreferenceVector, vector_type)));
+                result.add(userCollect);
+            }
+            setSimilar_item(result);
+            Set<UserCollect> recommendRoom = getRoomScoreTopN(result, user.getUserID());
+            return getRecommendRoom(recommendRoom);
         }
-        setSimilar_item(result);
-        Set<UserCollect> recommendRoom = getRoomScoreTopN(result, user.getUserID());
-        return getRecommendRoom(recommendRoom);
+        return null;
     }
 
     /**
@@ -102,23 +109,22 @@ public class RoomRecommendImpl implements RoomRecommendService {
      * @create: 2019/4/26
      **/
     public List<RoomDetail> getRecommendRoom(Set<UserCollect> userCollects) {
-        List<RoomDetail> roomDetails=new LinkedList<>();
+        List<RoomDetail> roomDetails = new LinkedList<>();
         Iterator<UserCollect> userCollectIterator = userCollects.iterator();
         while (userCollectIterator.hasNext()) {
-            UserCollect u=new UserCollect();
+            UserCollect u = new UserCollect();
             //这里需要用一个工具方法将数据写出来
-            BeanUtils.copyProperties(userCollectIterator.next(),u);
-            RoomDetail roomDetail=roomDetailRepository.getRoomDetailByMainID(u.getMainID());
-            List<ImagePath> imagePath=uploadRepository.getImagePathByMainID(u.getMainID());
-            if (imagePath==null||imagePath.size()==0)
-            {
+            BeanUtils.copyProperties(userCollectIterator.next(), u);
+            RoomDetail roomDetail = roomDetailRepository.getRoomDetailByMainID(u.getMainID());
+            List<ImagePath> imagePath = uploadRepository.getImagePathByMainID(u.getMainID());
+            if (imagePath == null || imagePath.size() == 0) {
                 roomDetail.setImageName(ConstantFiled.BASIC_IMAGE_NAME);
-            }else {
+            } else {
                 roomDetail.setImageName(imagePath.get(0).getImagePath());
             }
             roomDetails.add(roomDetail);
         }
-       return roomDetails;
+        return roomDetails;
     }
 
     /**
@@ -219,7 +225,7 @@ public class RoomRecommendImpl implements RoomRecommendService {
         divAreaCount.put("FourthLevel", 0);
         divAreaCount.put("FifthLevel", 0);
         for (RoomInformation roomInformation : roomInformations) {
-            String room_area=roomInformation.getRoomArea().replace("平方米","");
+            String room_area = roomInformation.getRoomArea().replace("平方米", "");
             Float area = Float.valueOf(room_area);
             if (area < 20) {
                 divAreaCount.put("FirstLevel", divAreaCount.get("FirstLevel") + 1);
@@ -252,29 +258,29 @@ public class RoomRecommendImpl implements RoomRecommendService {
         return divTypeCount;
     }
 
-    private Specification<RoomDetail> getCondition(RoomDetail r) {
-        Specification<RoomDetail> sp = new Specification<RoomDetail>() {
-            @Override
-            public Predicate toPredicate(Root<RoomDetail> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                // 创建 Predicate
-                Predicate predicate = criteriaBuilder.conjunction();
-                // 组装条件
-                //租房类型
-                if (r.getRoomDimID() != null
-                        && !r.getRoomDimID().equals("-1")) {
-                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("roomDimID"), r.getRoomDimID()));
-                }
-                //地理位置
-                if (r.getSpaceDimID() != null
-                        && !r.getSpaceDimID().equals("-1")) {
-                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("spaceDimID"), r.getSpaceDimID()));
-                }
-                if (r.getMainID() != null) {
-                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("mainID"), r.getMainID()));
-                }
-                return predicate;
-            }
-        };
-        return sp;
-    }
+//    private Specification<RoomDetail> getCondition(RoomDetail r) {
+//        Specification<RoomDetail> sp = new Specification<RoomDetail>() {
+//            @Override
+//            public Predicate toPredicate(Root<RoomDetail> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+//                // 创建 Predicate
+//                Predicate predicate = criteriaBuilder.conjunction();
+//                // 组装条件
+//                //租房类型
+//                if (r.getRoomDimID() != null
+//                        && !r.getRoomDimID().equals("-1")) {
+//                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("roomDimID"), r.getRoomDimID()));
+//                }
+//                //地理位置
+//                if (r.getSpaceDimID() != null
+//                        && !r.getSpaceDimID().equals("-1")) {
+//                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("spaceDimID"), r.getSpaceDimID()));
+//                }
+//                if (r.getMainID() != null) {
+//                    predicate.getExpressions().add(criteriaBuilder.equal(root.get("mainID"), r.getMainID()));
+//                }
+//                return predicate;
+//            }
+//        };
+//        return sp;
+//    }
 }

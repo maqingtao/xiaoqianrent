@@ -33,17 +33,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 var callback = function (data) {
                     var result = JSON.stringify(data)
                     if (result == '1') {
-
-                        location.href="/"
+                        location.href = "/"
+                    }else {
+                        document.getElementById("warnmessage").innerText="用户名已存在"
                     }
+
                 }
-                if ($("#myForm").data("bootstrapValidator").isValid())
-                {
+                if ($("#myForm").data("bootstrapValidator").isValid()) {
                     $.postJSON('/api/register', {"username": username, "password": password}, callback)
                 }
             });
         })
-
+        function clean()
+        {
+            document.getElementById("warnmessage").innerText="";
+        }
         $.postJSON = function (url, data, callback) {
             return jQuery.ajax({
                 'type': 'POST',
@@ -149,8 +153,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <div class="form-info">
                 <form id="myForm">
                     <div class="form-group">
-                        <input type="text" placeholder="Name" required="" name="username" id="name">
+                        <input type="text" placeholder="Name" required="" name="username" id="name" onfocus="clean()">
                     </div>
+                    <div><span><font id="warnmessage" color="red"></font></span></div>
                     <div class="form-group">
                         <input type="password" placeholder="Password " required="" name="password" id="pwd">
                     </div>

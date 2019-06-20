@@ -3,9 +3,7 @@ package com.example.xiaoqian1.login.bean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.*;
-import java.io.Serializable;
 @Setter
 @Getter
 @ToString
@@ -18,4 +16,7 @@ public class User {
     private String username;
     private String password;
     private String userID;
+    @Transient
+    private String mainID;
+
 }

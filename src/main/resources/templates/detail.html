@@ -83,6 +83,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         **/
 
         function getRecommendMessage() {
+            var mainID = getQueryString("mainID")
             var userID= $.cookie('userid');
             var callback = function (data) {
                 var result = JSON.stringify(data)
@@ -105,7 +106,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 }
                 recommend.innerHTML=str
             }
-            $.post('api/myRoomRecommend', {"userID": userID}, callback);
+            $.post('api/myRoomRecommend', {"userID": userID,"mainID": mainID}, callback);
         }
         //为轮播组件加入图片
         function setImage() {
@@ -266,9 +267,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="hero fa-navicon fa-2x nav_slide_button" id="hero">
                     <a href="#"><i class="glyphicon glyphicon-menu-hamburger"></i> </a>
                 </div>
-                <!---
-                <a href="#" class="right_bt" id="activator"><i class="glyphicon glyphicon-menu-hamburger"></i>  </a>
-            --->
+
             </div>
             <div class="clearfix"></div>
             <!---pop-up-box---->

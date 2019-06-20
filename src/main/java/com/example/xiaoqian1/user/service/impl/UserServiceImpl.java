@@ -76,12 +76,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delMyPublish(RoomInformation roomInformation) {
         if (roomInformation.getMainID() != null) {
+            //删除缩略表信息
             roomInformationRepository.delRoomByMainID(roomInformation.getMainID());
+            //删除详细表信息
             roomInformationRepository.delRoomDetailByMainID(roomInformation.getMainID());
             delImage(roomInformation.getMainID());
             uploadRepository.delImagePathByMainID(roomInformation.getMainID());
-//            /*删除审核表内容*/
-//            reviewRepository.delReviewRoomByMainID(roomInformation.getMainID());
+            /*删除审核表内容*/
+            reviewRepository.delReviewRoomByMainID(roomInformation.getMainID());
         }
     }
 
